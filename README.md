@@ -37,6 +37,14 @@ This phase delivers a fully interactive frontend interface with realistic Malays
    - Location details breakdown and student reporter details.
    - Maintenance log with assigned technician information.
    - Discussion and activity updates thread.
+7. **Student Profile & Account Settings**:
+   - Edit personal details (Full Name, Contact Phone, Bio).
+   - Academic program and College/Faculty enrollment.
+   - Campus residence hostel & room number (e.g., Murni Residence Block B).
+   - Emergency contact person and phone number.
+   - Avatar customizer: 1-click presets or custom photo upload.
+   - Password update & security settings.
+   - Notification preferences (Email status updates, SMS alerts, Weekly digest).
 
 #### 🛡️ Administrator Management Suite
 1. **Admin Operations Dashboard**:
