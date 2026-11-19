@@ -91,7 +91,7 @@ export const Select = ({
     setIsOpen(false)
 
     if (onChange) {
-      // Simulate standard event object for seamless drop-in compatibility
+      // Standard synthetic event for form compatibility
       const syntheticEvent = {
         target: {
           name,
@@ -197,7 +197,7 @@ export const Select = ({
         ))}
       </select>
 
-      {/* Trigger Button: 16px font size, minimum 48px height, clear border */}
+      {/* Trigger Button: 14px font size, 400 font-weight, min-height 44px */}
       <button
         type="button"
         id={`${selectId}-button`}
@@ -216,7 +216,7 @@ export const Select = ({
           }
         }}
         onKeyDown={handleKeyDown}
-        className={`w-full min-h-[48px] px-4 py-2.5 text-base font-medium rounded-xl border transition-all flex items-center justify-between gap-3 text-left shadow-xs ${
+        className={`w-full min-h-[44px] px-3.5 py-2.5 text-sm font-normal rounded-xl border transition-all flex items-center justify-between gap-3 text-left shadow-xs ${
           disabled
             ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
             : isOpen
@@ -226,21 +226,21 @@ export const Select = ({
         title={selectedOption ? String(selectedOption.label) : placeholder}
       >
         <span
-          className={`truncate text-base leading-normal ${
-            selectedOption ? 'text-slate-900 font-medium' : 'text-slate-400 font-normal'
+          className={`truncate text-sm font-normal leading-normal ${
+            selectedOption ? 'text-slate-900' : 'text-slate-400'
           }`}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown
-          className={`w-5 h-5 text-slate-500 shrink-0 transition-transform duration-200 ${
+          className={`w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ${
             isOpen ? 'rotate-180 text-blue-600' : ''
           }`}
           aria-hidden="true"
         />
       </button>
 
-      {/* Floating Dropdown Menu: 16px font size, min-h 46px option height, generous padding, sufficient width */}
+      {/* Floating Dropdown Menu: 14px–16px font size, 400 font-weight, min-h 42px option height */}
       {isOpen && (
         <div
           ref={listboxRef}
@@ -250,7 +250,7 @@ export const Select = ({
           className={`absolute left-0 z-50 mt-1.5 max-h-72 min-w-full w-max max-w-[calc(100vw-2rem)] sm:max-w-lg overflow-y-auto rounded-xl bg-white p-1.5 shadow-2xl border border-slate-200 focus:outline-none animate-in fade-in-50 zoom-in-95 duration-100 ${menuClassName}`}
         >
           {parsedOptions.length === 0 ? (
-            <div className="py-3 px-4 text-base text-slate-400 text-center">
+            <div className="py-2.5 px-3.5 text-sm font-normal text-slate-400 text-center">
               No options available
             </div>
           ) : (
@@ -265,15 +265,15 @@ export const Select = ({
                   aria-selected={isSelected}
                   onClick={() => handleSelectOption(opt.value)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`relative flex items-center justify-between px-4 py-3 min-h-[46px] text-base rounded-lg cursor-pointer transition-colors select-none ${
+                  className={`relative flex items-center justify-between px-3.5 py-2.5 min-h-[42px] text-sm font-normal rounded-lg cursor-pointer transition-colors select-none ${
                     isSelected
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
+                      ? 'bg-blue-50 text-blue-700 font-medium'
                       : isHighlighted
-                      ? 'bg-slate-100 text-slate-900 font-medium'
-                      : 'text-slate-800 font-normal hover:bg-slate-50'
+                      ? 'bg-slate-100 text-slate-900'
+                      : 'text-slate-800 hover:bg-slate-50'
                   }`}
                 >
-                  <span className="whitespace-normal break-words pr-4 text-base leading-snug">
+                  <span className="whitespace-normal break-words pr-3 text-sm leading-snug">
                     {opt.label}
                   </span>
                   {isSelected && (

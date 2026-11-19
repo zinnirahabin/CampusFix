@@ -105,11 +105,11 @@ export const Sidebar = ({ isOpen, onClose }) => {
               ) : (
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
               )}
-              <span className="text-xs font-semibold text-slate-800">
+              <span className="text-sm font-semibold text-slate-800">
                 {isAdmin ? 'Administrator Portal' : 'Student Portal'}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1">
+            <p className="text-xs font-normal text-slate-500 mt-1">
               {isAdmin
                 ? 'Central Facilities Management System'
                 : 'Report & track campus maintenance'}
@@ -121,14 +121,14 @@ export const Sidebar = ({ isOpen, onClose }) => {
             <Link
               to="/student/submit"
               onClick={onClose}
-              className="mb-5 flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-xs font-semibold shadow-md shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700 transition-all transform active:scale-98"
+              className="mb-5 flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700 transition-all transform active:scale-98"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Report New Issue</span>
             </Link>
           )}
 
-          {/* Main Navigation Links */}
+          {/* Main Navigation Links: 14px, 500 font-weight */}
           <nav className="space-y-1">
             {currentLinks.map((link) => {
               const Icon = link.icon
@@ -138,7 +138,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   to={link.to}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       isActive
                         ? 'bg-blue-50 text-blue-700 border border-blue-200/60 shadow-xs'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -154,7 +154,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
           {/* Campus Facility Notices */}
           <div className="mt-8 pt-4 border-t border-slate-100">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3">
+            <span className="text-xs font-medium uppercase tracking-wider text-slate-400 px-3">
               Campus Helpdesk
             </span>
             <div className="mt-2.5 space-y-1">
@@ -164,17 +164,17 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   e.preventDefault()
                   alert('UNITEN Facilities Emergency Hotline:\n📞 +60 3-8921 2020\nAvailable 24/7 for urgent campus hazards.')
                 }}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-slate-600 hover:bg-slate-50"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-normal text-slate-600 hover:bg-slate-50"
               >
-                <PhoneCall className="w-3.5 h-3.5 text-blue-600" />
+                <PhoneCall className="w-4 h-4 text-blue-600" />
                 <span>24/7 Hotline: Ext 2020</span>
               </a>
               <Link
                 to="/"
                 onClick={onClose}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-slate-600 hover:bg-slate-50"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-normal text-slate-600 hover:bg-slate-50"
               >
-                <FileText className="w-3.5 h-3.5 text-slate-400" />
+                <FileText className="w-4 h-4 text-slate-400" />
                 <span>Public Landing Page</span>
               </Link>
             </div>

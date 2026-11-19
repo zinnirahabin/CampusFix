@@ -193,32 +193,32 @@ export const StudentProfilePage = () => {
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Top Header & Breadcrumb */}
       <div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+        <div className="flex items-center gap-2 text-xs font-normal text-slate-500 mb-1">
           <Link to="/student/dashboard" className="hover:underline">
             Dashboard
           </Link>
           <span>/</span>
-          <span className="font-semibold text-slate-800">Student Profile</span>
+          <span className="font-medium text-slate-800">Student Profile</span>
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Student Profile & Account Settings
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
+        <p className="text-xs font-normal text-slate-500 mt-1">
           Manage your personal university credentials, faculty enrollment, and emergency contact details
         </p>
       </div>
 
       {/* Alerts */}
       {successMessage && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5 shadow-xs animate-in fade-in duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span className="font-semibold">{successMessage}</span>
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium flex items-center gap-2.5 shadow-xs animate-in fade-in duration-200">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <span>{successMessage}</span>
         </div>
       )}
 
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2.5 shadow-xs animate-in fade-in duration-200">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium flex items-center gap-2.5 shadow-xs animate-in fade-in duration-200">
+          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -241,7 +241,7 @@ export const StudentProfilePage = () => {
                 className="absolute bottom-0 right-0 p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-md cursor-pointer transition-transform hover:scale-110"
                 title="Upload custom profile photo"
               >
-                <Camera className="w-3.5 h-3.5" />
+                <Camera className="w-4 h-4" />
                 <input
                   type="file"
                   accept="image/*"
@@ -251,26 +251,26 @@ export const StudentProfilePage = () => {
               </label>
             </div>
 
-            <h2 className="text-base font-bold text-slate-900">{formData.name}</h2>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">{formData.studentId}</p>
+            <h2 className="text-base font-semibold text-slate-900">{formData.name}</h2>
+            <p className="text-xs font-normal text-slate-500 font-mono mt-0.5">{formData.studentId}</p>
 
-            <div className="mt-2 flex items-center justify-center gap-1.5">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <div className="mt-2.5 flex items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 Active Student
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
                 UNITEN Verified
               </span>
             </div>
 
-            <p className="text-xs text-slate-600 mt-3 px-2 italic">
+            <p className="text-sm font-normal text-slate-600 mt-3 px-2 italic leading-relaxed">
               "{formData.bio}"
             </p>
 
             {/* Avatar Presets Picker */}
             <div className="mt-5 pt-4 border-t border-slate-100 text-left">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-2">
                 Choose Avatar Preset
               </span>
               <div className="flex items-center justify-center gap-2">
@@ -279,7 +279,7 @@ export const StudentProfilePage = () => {
                     key={idx}
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, avatar: preset.url }))}
-                    className={`w-8 h-8 rounded-full overflow-hidden border-2 transition-all ${
+                    className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all ${
                       formData.avatar === preset.url
                         ? 'border-blue-600 ring-2 ring-blue-500/30 scale-105'
                         : 'border-slate-200 hover:border-slate-400 opacity-70 hover:opacity-100'
@@ -293,35 +293,35 @@ export const StudentProfilePage = () => {
             </div>
 
             {/* Quick Metrics */}
-            <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="p-2 rounded-xl bg-slate-50">
+            <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 text-center">
+              <div className="p-2.5 rounded-xl bg-slate-50">
                 <span className="block font-bold text-slate-900 text-base">{myReports.length}</span>
-                <span className="text-[10px] text-slate-500">Reports</span>
+                <span className="text-xs font-normal text-slate-500 mt-0.5 block">Reports</span>
               </div>
-              <div className="p-2 rounded-xl bg-slate-50">
+              <div className="p-2.5 rounded-xl bg-slate-50">
                 <span className="block font-bold text-indigo-600 text-base">{pendingCount}</span>
-                <span className="text-[10px] text-slate-500">Pending</span>
+                <span className="text-xs font-normal text-slate-500 mt-0.5 block">Pending</span>
               </div>
-              <div className="p-2 rounded-xl bg-slate-50">
+              <div className="p-2.5 rounded-xl bg-slate-50">
                 <span className="block font-bold text-emerald-600 text-base">{resolvedCount}</span>
-                <span className="text-[10px] text-slate-500">Resolved</span>
+                <span className="text-xs font-normal text-slate-500 mt-0.5 block">Resolved</span>
               </div>
             </div>
           </div>
 
-          {/* Emergency / Contact Badge Card */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3 text-xs">
-            <h3 className="font-bold text-slate-900 flex items-center gap-1.5">
+          {/* Campus Resident Info Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3">
+            <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
               <HeartHandshake className="w-4 h-4 text-rose-500" />
               <span>Campus Resident Info</span>
             </h3>
-            <div className="space-y-2 text-slate-600">
+            <div className="space-y-2 text-sm font-normal text-slate-600">
               <div className="flex items-start gap-2">
-                <Home className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <Home className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <span>{formData.hostel}</span>
               </div>
               <div className="flex items-start gap-2">
-                <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <Phone className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <span>Emergency: {formData.emergencyContact}</span>
               </div>
             </div>
@@ -330,11 +330,11 @@ export const StudentProfilePage = () => {
 
         {/* Right Column: Edit Forms with Tabs (8 cols) */}
         <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-          {/* Tabs Navigation Header */}
-          <div className="flex border-b border-slate-200/80 bg-slate-50/50 px-4 pt-3 gap-2">
+          {/* Tabs Navigation Header: 14px font size, 500 font-weight */}
+          <div className="flex border-b border-slate-200/80 bg-slate-50/50 px-4 pt-3 gap-2 overflow-x-auto">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 -mb-px ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === 'profile'
                   ? 'bg-white text-blue-700 border-blue-600 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 border-transparent'
@@ -346,7 +346,7 @@ export const StudentProfilePage = () => {
 
             <button
               onClick={() => setActiveTab('security')}
-              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 -mb-px ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === 'security'
                   ? 'bg-white text-blue-700 border-blue-600 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 border-transparent'
@@ -358,7 +358,7 @@ export const StudentProfilePage = () => {
 
             <button
               onClick={() => setActiveTab('notifications')}
-              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 -mb-px ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === 'notifications'
                   ? 'bg-white text-blue-700 border-blue-600 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 border-transparent'
@@ -372,12 +372,12 @@ export const StudentProfilePage = () => {
           <div className="p-6">
             {/* TAB 1: Profile Information Form */}
             {activeTab === 'profile' && (
-              <form onSubmit={handleSaveProfile} className="space-y-5 text-xs">
+              <form onSubmit={handleSaveProfile} className="space-y-5">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h2 className="text-lg font-semibold text-slate-900">
                     Edit Profile Information
-                  </h3>
-                  <p className="text-slate-500 mt-0.5">
+                  </h2>
+                  <p className="text-xs font-normal text-slate-500 mt-1">
                     Update your display name, contact phone, and campus residential details
                   </p>
                 </div>
@@ -385,30 +385,30 @@ export const StudentProfilePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Student ID (Read Only) */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
-                      Student ID Number <span className="text-slate-400 text-[10px]">(Institutional ID)</span>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                      Student ID Number <span className="text-xs font-normal text-slate-400">(Institutional ID)</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <Lock className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Lock className="w-4 h-4" />
                       </div>
                       <input
                         type="text"
                         value={formData.studentId}
                         disabled
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-xl cursor-not-allowed font-mono font-semibold"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal bg-slate-100 text-slate-600 border border-slate-200 rounded-xl cursor-not-allowed font-mono min-h-[44px]"
                       />
                     </div>
                   </div>
 
                   {/* University Email */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       University Email Address
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <Mail className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Mail className="w-4 h-4" />
                       </div>
                       <input
                         type="email"
@@ -416,7 +416,7 @@ export const StudentProfilePage = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                       />
                     </div>
                   </div>
@@ -425,12 +425,12 @@ export const StudentProfilePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Full Name */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       Full Legal Name <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <User className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <User className="w-4 h-4" />
                       </div>
                       <input
                         type="text"
@@ -438,19 +438,19 @@ export const StudentProfilePage = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                       />
                     </div>
                   </div>
 
                   {/* Contact Number */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       Contact Mobile Number
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <Phone className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Phone className="w-4 h-4" />
                       </div>
                       <input
                         type="text"
@@ -458,7 +458,7 @@ export const StudentProfilePage = () => {
                         value={formData.phone}
                         onChange={handleInputChange}
                         placeholder="+60 1x-xxx xxxx"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                       />
                     </div>
                   </div>
@@ -467,7 +467,7 @@ export const StudentProfilePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Faculty */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       College / Faculty
                     </label>
                     <Select
@@ -484,12 +484,12 @@ export const StudentProfilePage = () => {
 
                   {/* Academic Program */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       Degree Program
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <GraduationCap className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <GraduationCap className="w-4 h-4" />
                       </div>
                       <input
                         type="text"
@@ -497,7 +497,7 @@ export const StudentProfilePage = () => {
                         value={formData.program}
                         onChange={handleInputChange}
                         placeholder="e.g. Bachelor of Software Engineering (Hons)"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                       />
                     </div>
                   </div>
@@ -506,12 +506,12 @@ export const StudentProfilePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Hostel Room */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       Campus Residence / Hostel Room
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <Home className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Home className="w-4 h-4" />
                       </div>
                       <input
                         type="text"
@@ -519,19 +519,19 @@ export const StudentProfilePage = () => {
                         value={formData.hostel}
                         onChange={handleInputChange}
                         placeholder="e.g. Murni Residence Block B, Room 304"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                       />
                     </div>
                   </div>
 
                   {/* Emergency Contact */}
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       Emergency Contact Person & Phone
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <HeartHandshake className="w-3.5 h-3.5" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <HeartHandshake className="w-4 h-4" />
                       </div>
                       <input
                         type="text"
@@ -539,7 +539,7 @@ export const StudentProfilePage = () => {
                         value={formData.emergencyContact}
                         onChange={handleInputChange}
                         placeholder="e.g. Parent Name - +60 12-xxxxxxx"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                       />
                     </div>
                   </div>
@@ -547,7 +547,7 @@ export const StudentProfilePage = () => {
 
                 {/* Bio / Student Notes */}
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     Student Bio / Note
                   </label>
                   <textarea
@@ -556,16 +556,16 @@ export const StudentProfilePage = () => {
                     value={formData.bio}
                     onChange={handleInputChange}
                     placeholder="Short bio or note regarding your campus activities..."
-                    className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
-                {/* Submit Actions */}
+                {/* Submit Actions: 14px font size, 600 font-weight */}
                 <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     <span>{isSaving ? 'Saving Changes...' : 'Save Profile Changes'}</span>
@@ -576,18 +576,18 @@ export const StudentProfilePage = () => {
 
             {/* TAB 2: Security & Password Form */}
             {activeTab === 'security' && (
-              <form onSubmit={handleSaveSecurity} className="space-y-4 text-xs max-w-md">
+              <form onSubmit={handleSaveSecurity} className="space-y-4 max-w-md">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h2 className="text-lg font-semibold text-slate-900">
                     Change Password
-                  </h3>
-                  <p className="text-slate-500 mt-0.5">
+                  </h2>
+                  <p className="text-xs font-normal text-slate-500 mt-1">
                     Update your account credentials to keep your portal secure
                   </p>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     Current Password
                   </label>
                   <input
@@ -596,15 +596,15 @@ export const StudentProfilePage = () => {
                     value={securityData.currentPassword}
                     onChange={handleSecurityChange}
                     placeholder="••••••••"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">
+                  <span className="text-xs font-normal text-slate-400 mt-1 block">
                     (Default demo password: <code>password123</code>)
                   </span>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     New Password
                   </label>
                   <input
@@ -613,12 +613,12 @@ export const StudentProfilePage = () => {
                     value={securityData.newPassword}
                     onChange={handleSecurityChange}
                     placeholder="••••••••"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     Confirm New Password
                   </label>
                   <input
@@ -627,7 +627,7 @@ export const StudentProfilePage = () => {
                     value={securityData.confirmPassword}
                     onChange={handleSecurityChange}
                     placeholder="••••••••"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                   />
                 </div>
 
@@ -635,9 +635,9 @@ export const StudentProfilePage = () => {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-bold shadow-md shadow-indigo-500/20 transition-all flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
                   >
-                    <Lock className="w-3.5 h-3.5" />
+                    <Lock className="w-4 h-4" />
                     <span>{isSaving ? 'Updating...' : 'Update Password'}</span>
                   </button>
                 </div>
@@ -646,21 +646,21 @@ export const StudentProfilePage = () => {
 
             {/* TAB 3: Preferences Form */}
             {activeTab === 'notifications' && (
-              <div className="space-y-5 text-xs max-w-lg">
+              <div className="space-y-5 max-w-lg">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h2 className="text-lg font-semibold text-slate-900">
                     Communication & Notification Preferences
-                  </h3>
-                  <p className="text-slate-500 mt-0.5">
+                  </h2>
+                  <p className="text-xs font-normal text-slate-500 mt-1">
                     Control how the Facilities Department notifies you about reported repairs
                   </p>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="space-y-3.5">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                     <div>
-                      <span className="font-bold text-slate-800 block">Report Status Updates</span>
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-sm font-medium text-slate-800 block">Report Status Updates</span>
+                      <span className="text-xs font-normal text-slate-500 mt-0.5 block">
                         Receive email notifications when an admin or technician updates your report.
                       </span>
                     </div>
@@ -672,10 +672,10 @@ export const StudentProfilePage = () => {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                     <div>
-                      <span className="font-bold text-slate-800 block">SMS Urgent Alerts</span>
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-sm font-medium text-slate-800 block">SMS Urgent Alerts</span>
+                      <span className="text-xs font-normal text-slate-500 mt-0.5 block">
                         Get text alerts for critical campus power or water shutdown announcements.
                       </span>
                     </div>
@@ -687,10 +687,10 @@ export const StudentProfilePage = () => {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                     <div>
-                      <span className="font-bold text-slate-800 block">Weekly Campus Digest</span>
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-sm font-medium text-slate-800 block">Weekly Campus Digest</span>
+                      <span className="text-xs font-normal text-slate-500 mt-0.5 block">
                         Receive a weekly summary of resolved campus infrastructure improvements.
                       </span>
                     </div>
@@ -710,9 +710,9 @@ export const StudentProfilePage = () => {
                       setSuccessMessage('Notification preferences saved!')
                       setTimeout(() => setSuccessMessage(''), 3000)
                     }}
-                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
                   >
-                    <Save className="w-3.5 h-3.5" />
+                    <Save className="w-4 h-4" />
                     <span>Save Preferences</span>
                   </button>
                 </div>
