@@ -12,6 +12,7 @@ import {
   ExternalLink,
   ChevronDown,
   Building2,
+  User,
 } from 'lucide-react'
 
 export const Navbar = ({ onToggleSidebar }) => {
@@ -177,6 +178,16 @@ export const Navbar = ({ onToggleSidebar }) => {
                         <Building2 className="w-4 h-4 text-slate-400" />
                         Dashboard
                       </Link>
+                      {isStudent && (
+                        <Link
+                          to="/student/profile"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                        >
+                          <User className="w-4 h-4 text-slate-400" />
+                          Student Profile
+                        </Link>
+                      )}
                       <button
                         onClick={() => {
                           setShowProfileMenu(false)

@@ -12,6 +12,7 @@ import {
   X,
   FileText,
   LifeBuoy,
+  User,
 } from 'lucide-react'
 
 export const Sidebar = ({ isOpen, onClose }) => {
@@ -33,6 +34,11 @@ export const Sidebar = ({ isOpen, onClose }) => {
       to: '/student/reports',
       label: 'My Submitted Reports',
       icon: ClipboardList,
+    },
+    {
+      to: '/student/profile',
+      label: 'My Profile',
+      icon: User,
     },
   ]
 

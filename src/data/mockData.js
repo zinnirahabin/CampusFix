@@ -397,5 +397,10 @@ export const MOCK_STUDENT_USER = {
   email: 'aiman@student.uniten.edu.my',
   role: 'student',
   faculty: 'College of Computing & Informatics',
+  program: 'Bachelor of Software Engineering (Hons)',
+  phone: '+60 17-234 5678',
+  hostel: 'Murni Residence, Block B, Room 304',
+  emergencyContact: 'Encik Shamsul (Father) - +60 12-345 6789',
   avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+  bio: 'Year 3 Software Engineering undergraduate student passionate about campus facility improvements and cloud apps.',
 }

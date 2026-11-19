@@ -55,6 +55,17 @@ export const AuthProvider = ({ children }) => {
     return { success: true, user: newStudent }
   }
 
+  const updateProfile = (updatedFields) => {
+    setUser((prev) => {
+      const updated = {
+        ...prev,
+        ...updatedFields,
+      }
+      return updated
+    })
+    return { success: true }
+  }
+
   const logout = () => {
     setUser(null)
   }
@@ -76,6 +87,7 @@ export const AuthProvider = ({ children }) => {
         isStudent: user?.role === 'student',
         login,
         register,
+        updateProfile,
         logout,
         switchRole,
       }}

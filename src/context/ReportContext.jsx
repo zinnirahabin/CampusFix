@@ -151,6 +151,27 @@ export const ReportProvider = ({ children }) => {
     )
   }
 
+  const updateStudent = (studentId, updatedData) => {
+    setStudents((prev) =>
+      prev.map((s) => (s.id === studentId ? { ...s, ...updatedData } : s))
+    )
+
+    // Synchronize reporter details on existing reports if name or email changed
+    if (updatedData.name || updatedData.email) {
+      setReports((prev) =>
+        prev.map((r) =>
+          r.studentId === studentId
+            ? {
+                ...r,
+                studentName: updatedData.name || r.studentName,
+                studentEmail: updatedData.email || r.studentEmail,
+              }
+            : r
+        )
+      )
+    }
+  }
+
   const resetToSampleData = () => {
     setReports(INITIAL_REPORTS)
     setCategories(INITIAL_CATEGORIES)
@@ -179,6 +200,7 @@ export const ReportProvider = ({ children }) => {
         getReportById,
         addCategory,
         toggleCategoryStatus,
+        updateStudent,
         resetToSampleData,
         stats: {
           total: totalReports,

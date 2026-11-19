@@ -18,6 +18,7 @@ import {
   MapPin,
   ChevronRight,
   Info,
+  User,
 } from 'lucide-react'
 
 export const StudentDashboard = () => {
@@ -62,10 +63,17 @@ export const StudentDashboard = () => {
               <span>Report an Issue</span>
             </Link>
             <Link
-              to="/student/reports"
+              to="/student/profile"
               className="px-4 py-3 rounded-xl bg-blue-800/60 hover:bg-blue-800 text-white font-semibold text-xs border border-white/20 transition-all flex items-center gap-1.5"
             >
-              <span>View All Reports</span>
+              <User className="w-4 h-4 text-blue-200" />
+              <span>Edit Profile</span>
+            </Link>
+            <Link
+              to="/student/reports"
+              className="px-4 py-3 rounded-xl bg-blue-800/40 hover:bg-blue-800 text-white font-semibold text-xs border border-white/20 transition-all flex items-center gap-1.5"
+            >
+              <span>My Reports</span>
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>

@@ -12,6 +12,7 @@ import StudentDashboard from './pages/student/StudentDashboard'
 import SubmitReportPage from './pages/student/SubmitReportPage'
 import MyReportsPage from './pages/student/MyReportsPage'
 import ReportDetailsPage from './pages/student/ReportDetailsPage'
+import StudentProfilePage from './pages/student/StudentProfilePage'
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -33,6 +34,7 @@ export const App = () => {
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/submit" element={<SubmitReportPage />} />
         <Route path="/student/reports" element={<MyReportsPage />} />
+        <Route path="/student/profile" element={<StudentProfilePage />} />
 
         {/* Shared Report Details Route */}
         <Route path="/reports/:id" element={<ReportDetailsPage />} />
