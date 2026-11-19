@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import StatusBadge from '../../components/common/StatusBadge'
 import PriorityBadge from '../../components/common/PriorityBadge'
 import CategoryBadge from '../../components/common/CategoryBadge'
+import Select from '../../components/common/Select'
 import { formatDate, getRelativeTime } from '../../utils/formatters'
 import {
   Search,
@@ -149,10 +150,9 @@ export const MyReportsPage = () => {
 
           {/* Category Filter */}
           <div className="sm:col-span-3">
-            <select
+            <Select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="All">All Categories</option>
               {categories.map((c) => (
@@ -160,19 +160,20 @@ export const MyReportsPage = () => {
                   {c.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Sort By */}
           <div className="sm:col-span-3 flex items-center gap-2">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="newest">Sort: Newest First</option>
-              <option value="oldest">Sort: Oldest First</option>
-            </select>
+            <div className="flex-1">
+              <Select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Sort: Newest First</option>
+                <option value="oldest">Sort: Oldest First</option>
+              </Select>
+            </div>
 
             {/* View Mode Toggle Buttons */}
             <div className="flex items-center bg-slate-100 p-1 rounded-xl shrink-0 border border-slate-200">

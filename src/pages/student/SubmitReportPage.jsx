@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useReports } from '../../context/ReportContext'
 import { useAuth } from '../../context/AuthContext'
 import { getCategoryIcon } from '../../components/common/CategoryBadge'
+import Select from '../../components/common/Select'
 import {
   UploadCloud,
   X,
@@ -208,31 +209,27 @@ export const SubmitReportPage = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Campus Building / Complex
               </label>
-              <div className="relative">
-                <select
-                  name="building"
-                  value={formData.building}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {campusBuildings.map((bldg) => (
-                    <option key={bldg} value={bldg}>
-                      {bldg}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                name="building"
+                value={formData.building}
+                onChange={handleChange}
+              >
+                {campusBuildings.map((bldg) => (
+                  <option key={bldg} value={bldg}>
+                    {bldg}
+                  </option>
+                ))}
+              </Select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Floor / Level
               </label>
-              <select
+              <Select
                 name="floor"
                 value={formData.floor}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="Basement">Basement</option>
                 <option value="Ground Floor">Ground Floor</option>
@@ -241,7 +238,7 @@ export const SubmitReportPage = () => {
                 <option value="Level 3">Level 3</option>
                 <option value="Level 4">Level 4</option>
                 <option value="Rooftop">Rooftop / Exterior</option>
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -296,17 +293,16 @@ export const SubmitReportPage = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Priority Severity
               </label>
-              <select
+              <Select
                 name="priority"
                 value={formData.priority}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="Low">Low (Minor cosmetic / non-urgent)</option>
                 <option value="Medium">Medium (Routine defect)</option>
                 <option value="High">High (Impacting class or safety)</option>
                 <option value="Urgent">Urgent (Safety emergency / flood / power cut)</option>
-              </select>
+              </Select>
             </div>
           </div>
 

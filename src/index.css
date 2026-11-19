@@ -9,6 +9,81 @@
   }
 }
 
+/* ==========================================================================
+   GLOBAL ACCESSIBLE DROPDOWN & SELECT STYLES (16px MINIMUM)
+   ========================================================================== */
+
+/* Universal font-size enforcement for all selects, options and dropdown controls */
+select,
+select option,
+select optgroup,
+.campusfix-select,
+.campusfix-select option {
+  font-size: 16px !important;
+  font-size: 1rem !important;
+  color: #0f172a !important; /* slate-900 for maximum readability & high contrast */
+  font-family: inherit;
+}
+
+/* Base styling for all native HTML select elements */
+select {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  min-height: 48px !important;
+  padding: 10px 42px 10px 16px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important; /* slate-300 */
+  border-radius: 0.75rem !important; /* rounded-xl */
+  font-weight: 500 !important;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+  
+  /* Modern accessible chevron icon */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e") !important;
+  background-position: right 14px center !important;
+  background-repeat: no-repeat !important;
+  background-size: 1.25rem 1.25rem !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+select:hover:not(:disabled) {
+  border-color: #94a3b8 !important; /* slate-400 */
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #2563eb !important; /* blue-600 */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+  background-color: #ffffff !important;
+}
+
+select:disabled {
+  background-color: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Dropdown option menu popup typography and spacing */
+select option {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  padding: 12px 16px !important;
+  min-height: 44px !important;
+  line-height: 1.5 !important;
+}
+
+select option:checked {
+  background-color: #eff6ff !important; /* blue-50 */
+  color: #1d4ed8 !important; /* blue-700 */
+  font-weight: 600 !important;
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

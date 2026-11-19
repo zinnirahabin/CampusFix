@@ -7,6 +7,7 @@ import StatusBadge from '../../components/common/StatusBadge'
 import PriorityBadge from '../../components/common/PriorityBadge'
 import CategoryBadge, { getCategoryIcon } from '../../components/common/CategoryBadge'
 import Modal from '../../components/common/Modal'
+import Select from '../../components/common/Select'
 import { formatDate, getRelativeTime } from '../../utils/formatters'
 import {
   ShieldCheck,
@@ -338,16 +339,15 @@ export const AdminDashboard = () => {
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Report Status</label>
-              <select
+              <Select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
               >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Rejected">Rejected</option>
-              </select>
+              </Select>
             </div>
 
             <div>

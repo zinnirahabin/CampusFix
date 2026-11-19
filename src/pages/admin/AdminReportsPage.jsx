@@ -5,6 +5,7 @@ import StatusBadge from '../../components/common/StatusBadge'
 import PriorityBadge from '../../components/common/PriorityBadge'
 import CategoryBadge from '../../components/common/CategoryBadge'
 import Modal from '../../components/common/Modal'
+import Select from '../../components/common/Select'
 import { formatDate, getRelativeTime } from '../../utils/formatters'
 import {
   Search,
@@ -150,25 +151,23 @@ export const AdminReportsPage = () => {
 
           {/* Status Filter */}
           <div className="sm:col-span-3">
-            <select
+            <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
             >
               <option value="All">All Statuses</option>
               <option value="Pending">Pending Review</option>
               <option value="In Progress">In Progress</option>
               <option value="Resolved">Resolved</option>
               <option value="Rejected">Rejected</option>
-            </select>
+            </Select>
           </div>
 
           {/* Category Filter */}
           <div className="sm:col-span-3">
-            <select
+            <Select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
             >
               <option value="All">All Categories</option>
               {categories.map((c) => (
@@ -176,22 +175,21 @@ export const AdminReportsPage = () => {
                   {c.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Priority Filter */}
           <div className="sm:col-span-2">
-            <select
+            <Select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
             >
               <option value="All">All Priorities</option>
               <option value="Urgent">Urgent</option>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -362,16 +360,15 @@ export const AdminReportsPage = () => {
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Update Status</label>
-              <select
+              <Select
                 value={modalStatus}
                 onChange={(e) => setModalStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
               >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Rejected">Rejected</option>
-              </select>
+              </Select>
             </div>
 
             <div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Select from '../components/common/Select'
 import {
   Wrench,
   User,
@@ -170,19 +171,16 @@ export const RegisterPage = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Faculty / College
                 </label>
-                <div className="relative">
-                  <select
-                    name="faculty"
-                    value={formData.faculty}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="College of Computing & Informatics">College of Computing & Informatics</option>
-                    <option value="College of Engineering">College of Engineering</option>
-                    <option value="College of Business Administration">College of Business Administration</option>
-                    <option value="College of Energy Economics">College of Energy Economics</option>
-                  </select>
-                </div>
+                <Select
+                  name="faculty"
+                  value={formData.faculty}
+                  onChange={handleChange}
+                >
+                  <option value="College of Computing & Informatics">College of Computing & Informatics</option>
+                  <option value="College of Engineering">College of Engineering</option>
+                  <option value="College of Business Administration">College of Business Administration</option>
+                  <option value="College of Energy Economics">College of Energy Economics</option>
+                </Select>
               </div>
 
               <div>

@@ -113,21 +113,21 @@ export const Navbar = ({ onToggleSidebar }) => {
               </button>
 
               {showNotificationToast && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 p-4 z-50 text-xs">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 font-semibold text-slate-800">
+                <div className="absolute right-0 mt-2 w-88 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 z-50 text-sm">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 font-bold text-slate-800 text-sm">
                     <span>Recent Alerts</span>
-                    <span className="text-[10px] text-blue-600 font-normal">2 new</span>
+                    <span className="text-xs text-blue-600 font-semibold px-2 py-0.5 rounded-full bg-blue-50">2 new</span>
                   </div>
-                  <div className="mt-3 space-y-2">
-                    <div className="p-2 rounded-lg bg-blue-50/60 text-slate-700">
-                      <p className="font-medium text-blue-900">CF-2024-001 Updated</p>
-                      <p className="text-[11px] text-slate-600 mt-0.5">HVAC technician assigned to CCI Lab 402 AC leak.</p>
-                      <span className="text-[10px] text-slate-400 mt-1 block">15 mins ago</span>
+                  <div className="mt-3 space-y-2.5">
+                    <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-100/60 text-slate-700">
+                      <p className="font-bold text-blue-900 text-sm">CF-2024-001 Updated</p>
+                      <p className="text-xs text-slate-600 mt-1">HVAC technician assigned to CCI Lab 402 AC leak.</p>
+                      <span className="text-[11px] text-slate-400 mt-1.5 block">15 mins ago</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-slate-50 text-slate-700">
-                      <p className="font-medium text-slate-900">Scheduled Maintenance</p>
-                      <p className="text-[11px] text-slate-600 mt-0.5">Water supply shutoff for Library Annex tomorrow 2 AM - 5 AM.</p>
-                      <span className="text-[10px] text-slate-400 mt-1 block">2 hours ago</span>
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-700">
+                      <p className="font-bold text-slate-900 text-sm">Scheduled Maintenance</p>
+                      <p className="text-xs text-slate-600 mt-1">Water supply shutoff for Library Annex tomorrow 2 AM - 5 AM.</p>
+                      <span className="text-[11px] text-slate-400 mt-1.5 block">2 hours ago</span>
                     </div>
                   </div>
                 </div>
@@ -158,34 +158,34 @@ export const Navbar = ({ onToggleSidebar }) => {
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50">
-                    <div className="px-4 py-2 border-b border-slate-100">
-                      <p className="text-xs font-semibold text-slate-900">{user.name}</p>
-                      <p className="text-[11px] text-slate-500 truncate">{user.email}</p>
-                      <span className={`inline-block mt-1 text-[10px] px-2 py-0.5 rounded font-semibold uppercase ${
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in-50 zoom-in-95 duration-100">
+                    <div className="px-4 py-3 border-b border-slate-100">
+                      <p className="text-sm font-bold text-slate-900">{user.name}</p>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
+                      <span className={`inline-block mt-1.5 text-[11px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                         isAdmin ? 'bg-indigo-100 text-indigo-700' : 'bg-blue-100 text-blue-700'
                       }`}>
                         {user.role}
                       </span>
                     </div>
 
-                    <div className="py-1">
+                    <div className="py-1.5 space-y-0.5">
                       <Link
                         to={isAdmin ? '/admin/dashboard' : '/student/dashboard'}
                         onClick={() => setShowProfileMenu(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                       >
                         <Building2 className="w-4 h-4 text-slate-400" />
-                        Dashboard
+                        <span>Dashboard</span>
                       </Link>
                       {isStudent && (
                         <Link
                           to="/student/profile"
                           onClick={() => setShowProfileMenu(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                         >
                           <User className="w-4 h-4 text-slate-400" />
-                          Student Profile
+                          <span>Student Profile Settings</span>
                         </Link>
                       )}
                       <button
@@ -193,32 +193,32 @@ export const Navbar = ({ onToggleSidebar }) => {
                           setShowProfileMenu(false)
                           handleRoleToggle()
                         }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors text-left"
                       >
                         {isAdmin ? (
                           <>
                             <UserCheck className="w-4 h-4 text-slate-400" />
-                            Switch to Student View
+                            <span>Switch to Student View</span>
                           </>
                         ) : (
                           <>
                             <ShieldCheck className="w-4 h-4 text-slate-400" />
-                            Switch to Admin View
+                            <span>Switch to Admin View</span>
                           </>
                         )}
                       </button>
                     </div>
 
-                    <div className="border-t border-slate-100 pt-1">
+                    <div className="border-t border-slate-100 pt-1.5 mt-1">
                       <button
                         onClick={() => {
                           setShowProfileMenu(false)
                           handleLogout()
                         }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors text-left"
                       >
                         <LogOut className="w-4 h-4 text-rose-500" />
-                        Sign Out
+                        <span>Sign Out</span>
                       </button>
                     </div>
                   </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useReports } from '../../context/ReportContext'
+import Select from '../../components/common/Select'
 import {
   User,
   Mail,
@@ -469,19 +470,16 @@ export const StudentProfilePage = () => {
                     <label className="block font-semibold text-slate-700 mb-1">
                       College / Faculty
                     </label>
-                    <div className="relative">
-                      <select
-                        name="faculty"
-                        value={formData.faculty}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="College of Computing & Informatics">College of Computing & Informatics (CCI)</option>
-                        <option value="College of Engineering">College of Engineering (COE)</option>
-                        <option value="College of Business Administration">College of Business Administration (COBA)</option>
-                        <option value="College of Energy Economics">College of Energy Economics (CES)</option>
-                      </select>
-                    </div>
+                    <Select
+                      name="faculty"
+                      value={formData.faculty}
+                      onChange={handleInputChange}
+                    >
+                      <option value="College of Computing & Informatics">College of Computing & Informatics (CCI)</option>
+                      <option value="College of Engineering">College of Engineering (COE)</option>
+                      <option value="College of Business Administration">College of Business Administration (COBA)</option>
+                      <option value="College of Energy Economics">College of Energy Economics (CES)</option>
+                    </Select>
                   </div>
 
                   {/* Academic Program */}

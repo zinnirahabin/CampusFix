@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useReports } from '../../context/ReportContext'
+import Select from '../../components/common/Select'
 import {
   Users,
   Search,
@@ -87,17 +88,16 @@ export const AdminStudentsPage = () => {
           </div>
 
           <div className="sm:col-span-4">
-            <select
+            <Select
               value={facultyFilter}
               onChange={(e) => setFacultyFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
             >
               {faculties.map((f) => (
                 <option key={f} value={f}>
                   {f === 'All' ? 'All Colleges & Faculties' : f}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
       </div>
