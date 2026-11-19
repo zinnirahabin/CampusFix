@@ -100,6 +100,7 @@ CampusFix/
 │   │       ├── PriorityBadge.jsx    # Priority indicator (Urgent, High, Med, Low)
 │   │       ├── CategoryBadge.jsx    # Category badge with icons
 │   │       ├── StatCard.jsx         # KPI overview metric cards
+│   │       ├── Select.jsx           # Accessible shared 16px dropdown component
 │   │       └── Modal.jsx            # Reusable popup dialog modal
 │   ├── context/
 │   │   ├── AuthContext.jsx          # Authentication state & role switcher
