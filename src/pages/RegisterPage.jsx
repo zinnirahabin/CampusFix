@@ -2,17 +2,17 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Select from '../components/common/Select'
+import { validateMalaysianPhone, formatMalaysianPhone } from '../utils/formatters'
 import {
-  Wrench,
   User,
   Mail,
   Lock,
   ArrowRight,
-  Building,
   Phone,
   CheckCircle2,
   AlertCircle,
   Hash,
+  GraduationCap,
 } from 'lucide-react'
 
 export const RegisterPage = () => {
@@ -25,77 +25,136 @@ export const RegisterPage = () => {
     password: '',
     confirmPassword: '',
   })
+  const [phoneError, setPhoneError] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { register } = useAuth()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
     setError('')
+    if (name === 'phone') {
+      setPhoneError('')
+    }
   }
 
-  const handleSubmit = (e) => {
+  const handlePhoneBlur = () => {
+    if (formData.phone && formData.phone.trim()) {
+      const result = validateMalaysianPhone(formData.phone)
+      if (!result.valid) {
+        setPhoneError(result.message)
+      } else {
+        setPhoneError('')
+        setFormData((prev) => ({
+          ...prev,
+          phone: formatMalaysianPhone(prev.phone),
+        }))
+      }
+    }
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!formData.studentId || !formData.name || !formData.email || !formData.password) {
-      setError('Please fill in all required fields.')
+    setError('')
+    setPhoneError('')
+
+    if (!formData.studentId.trim() || !formData.name.trim() || !formData.email.trim() || !formData.password) {
+      setError('Please fill in all required fields marked with an asterisk (*).')
       return
     }
+
+    if (!formData.phone.trim()) {
+      setPhoneError('Please enter your contact mobile number for emergency maintenance notifications.')
+      return
+    }
+
+    // Strict validation of Malaysian telephone number
+    const phoneValidation = validateMalaysianPhone(formData.phone)
+    if (!phoneValidation.valid) {
+      setPhoneError(phoneValidation.message)
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters.')
+      return
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match.')
       return
     }
 
-    const res = register(formData)
-    if (res.success) {
-      setSuccess(true)
-      setTimeout(() => {
-        navigate('/student/dashboard')
-      }, 1000)
+    setIsSubmitting(true)
+
+    try {
+      const res = await register({
+        ...formData,
+        phone: formatMalaysianPhone(formData.phone),
+      })
+
+      if (res.success) {
+        setSuccess(true)
+        setTimeout(() => {
+          navigate('/student/dashboard')
+        }, 800)
+      } else {
+        setError(res.error || 'Registration failed. Please check your details.')
+      }
+    } catch (err) {
+      setError(err.message || 'An unexpected error occurred during registration.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F3F5F8] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Top Header with Official UNITEN Logo */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link to="/" className="inline-flex items-center gap-2.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25">
-            <Wrench className="w-6 h-6" />
-          </div>
-          <div className="text-left">
-            <span className="text-2xl font-extrabold tracking-tight text-slate-900">
-              Campus<span className="text-blue-600">Fix</span>
-            </span>
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              UNITEN Student Portal
-            </span>
-          </div>
+        <Link to="/" className="inline-block group mb-3">
+          <img
+            src="/images/uniten-logo.png"
+            alt="Universiti Tenaga Nasional"
+            className="h-16 w-auto mx-auto object-contain group-hover:scale-105 transition-transform"
+          />
         </Link>
-        <h2 className="mt-6 text-2xl font-bold tracking-tight text-slate-900">
+        <div className="flex items-center justify-center gap-1.5 mt-2">
+          <span className="text-2xl font-bold tracking-tight text-slate-900">
+            Campus<span className="text-[#E9432B]">Fix</span>
+          </span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#174D91]">
+            UNITEN
+          </span>
+        </div>
+        <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
           Create Student Account
-        </h2>
-        <p className="mt-1 text-xs text-slate-500">
-          Register to report facilities, track repairs, and receive notifications
+        </h1>
+        <p className="mt-1 text-sm font-normal text-slate-500">
+          Sign up to report facility defects and track campus repairs
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-200/80 sm:px-10">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-xl">
+        <div className="bg-white py-8 px-6 sm:px-10 rounded-2xl border border-slate-200 shadow-sm space-y-6">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-[#E9432B] text-sm font-medium flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span>Account created successfully! Redirecting to student dashboard...</span>
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium flex items-center gap-2.5">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <span>Account created successfully! Redirecting to student portal...</span>
             </div>
           )}
 
@@ -103,8 +162,8 @@ export const RegisterPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Student ID */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Student ID <span className="text-rose-500">*</span>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Student ID Number <span className="text-[#E9432B]">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -117,15 +176,16 @@ export const RegisterPage = () => {
                     onChange={handleChange}
                     required
                     placeholder="e.g. SW0108321"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                   />
                 </div>
+                <span className="text-xs text-slate-400 mt-1 block">UNITEN student registration number</span>
               </div>
 
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Full Name <span className="text-rose-500">*</span>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Full Name <span className="text-[#E9432B]">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -137,8 +197,8 @@ export const RegisterPage = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="e.g. Aiman Hakim"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g. Nurul Izzah binti Mansor"
+                    className="w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -146,8 +206,8 @@ export const RegisterPage = () => {
 
             {/* University Email */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Student Email <span className="text-rose-500">*</span>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Student Email Address <span className="text-[#E9432B]">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -160,54 +220,70 @@ export const RegisterPage = () => {
                   onChange={handleChange}
                   required
                   placeholder="studentname@student.uniten.edu.my"
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                 />
               </div>
             </div>
 
-            {/* Faculty & Phone */}
+            {/* Faculty & Contact Telephone Number */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Faculty / College
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  College / Faculty
                 </label>
                 <Select
                   name="faculty"
                   value={formData.faculty}
                   onChange={handleChange}
                 >
-                  <option value="College of Computing & Informatics">College of Computing & Informatics</option>
-                  <option value="College of Engineering">College of Engineering</option>
-                  <option value="College of Business Administration">College of Business Administration</option>
-                  <option value="College of Energy Economics">College of Energy Economics</option>
+                  <option value="College of Computing & Informatics">College of Computing & Informatics (CCI)</option>
+                  <option value="College of Engineering">College of Engineering (COE)</option>
+                  <option value="College of Business Administration">College of Business Administration (COBA)</option>
+                  <option value="College of Energy Economics">College of Energy Economics (CES)</option>
                 </Select>
               </div>
 
+              {/* PRIORITY 1: Contact Mobile Number Field */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Contact Number
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Contact Mobile Number <span className="text-[#E9432B]">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Phone className="w-4 h-4" />
                   </div>
                   <input
-                    type="text"
+                    type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="+60 1x-xxx xxxx"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onBlur={handlePhoneBlur}
+                    required
+                    placeholder="+60 12-345 6789"
+                    className={`w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border rounded-xl focus:outline-none focus:ring-2 min-h-[44px] ${
+                      phoneError
+                        ? 'border-[#E9432B] focus:ring-[#E9432B]'
+                        : 'border-slate-300 focus:ring-[#174D91]'
+                    }`}
                   />
                 </div>
+                {phoneError ? (
+                  <span className="text-xs text-[#E9432B] font-medium mt-1 block">
+                    {phoneError}
+                  </span>
+                ) : (
+                  <span className="text-xs text-slate-400 mt-1 block">
+                    Malaysian mobile format (e.g. +60 1x-xxx xxxx or 01x-xxx xxxx)
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Password & Confirm */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Password <span className="text-rose-500">*</span>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Password <span className="text-[#E9432B]">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -220,14 +296,14 @@ export const RegisterPage = () => {
                     onChange={handleChange}
                     required
                     placeholder="••••••••"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Confirm Password <span className="text-rose-500">*</span>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Confirm Password <span className="text-[#E9432B]">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -240,7 +316,7 @@ export const RegisterPage = () => {
                     onChange={handleChange}
                     required
                     placeholder="••••••••"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -249,19 +325,28 @@ export const RegisterPage = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/25 transition-all flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full py-3 px-4 rounded-xl bg-[#174D91] hover:bg-[#133F77] text-white font-semibold text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <span>Complete Registration</span>
-                <ArrowRight className="w-4 h-4" />
+                {isSubmitting ? (
+                  <span>Creating Student Account...</span>
+                ) : (
+                  <>
+                    <span>Register Student Account</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </div>
           </form>
 
-          <div className="mt-6 text-center text-xs text-slate-500">
-            <span>Already have an account? </span>
-            <Link to="/login" className="font-semibold text-blue-600 hover:underline">
-              Sign in
-            </Link>
+          <div className="border-t border-slate-100 pt-4 text-center">
+            <p className="text-sm text-slate-500">
+              Already have a UNITEN student or staff account?{' '}
+              <Link to="/login" className="font-semibold text-[#174D91] hover:underline">
+                Sign in here
+              </Link>
+            </p>
           </div>
         </div>
       </div>

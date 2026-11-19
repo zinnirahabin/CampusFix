@@ -25,6 +25,9 @@ import {
   Download,
   Maximize2,
   Edit3,
+  ExternalLink,
+  HardDrive,
+  FileCheck,
 } from 'lucide-react'
 
 export const ReportDetailsPage = () => {
@@ -52,6 +55,7 @@ export const ReportDetailsPage = () => {
   const [selectedStatus, setSelectedStatus] = useState(report?.status || 'In Progress')
   const [assignedTechnician, setAssignedTechnician] = useState(report?.assignedTo || '')
   const [adminNoteInput, setAdminNoteInput] = useState('')
+  const [isUpdating, setIsUpdating] = useState(false)
 
   if (!report) {
     return (
@@ -71,6 +75,13 @@ export const ReportDetailsPage = () => {
     )
   }
 
+  const formatFileSize = (bytes) => {
+    if (!bytes) return 'N/A'
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / 1048576).toFixed(2) + ' MB'
+  }
+
   const handleAddComment = (e) => {
     e.preventDefault()
     if (!newComment.trim()) return
@@ -87,16 +98,23 @@ export const ReportDetailsPage = () => {
     setNewComment('')
   }
 
-  const handleAdminUpdate = (e) => {
+  const handleAdminUpdate = async (e) => {
     e.preventDefault()
-    updateReportStatus(
-      report.id,
-      selectedStatus,
-      adminNoteInput || `Status transitioned to ${selectedStatus}`,
-      assignedTechnician
-    )
-    setShowStatusModal(false)
-    setAdminNoteInput('')
+    setIsUpdating(true)
+    try {
+      await updateReportStatus(
+        report.id,
+        selectedStatus,
+        adminNoteInput || `Status transitioned to ${selectedStatus} by Facilities Admin.`,
+        assignedTechnician
+      )
+      setShowStatusModal(false)
+      setAdminNoteInput('')
+    } catch (err) {
+      alert('Error updating status: ' + err.message)
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   return (
@@ -137,10 +155,10 @@ export const ReportDetailsPage = () => {
                 setAssignedTechnician(report.assignedTo)
                 setShowStatusModal(true)
               }}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-1.5 transition-all"
+              className="px-4 py-2 bg-[#174D91] hover:bg-[#133F77] text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all"
             >
               <Edit3 className="w-3.5 h-3.5" />
-              <span>Update Status & Notes</span>
+              <span>Update Status in Supabase</span>
             </button>
           )}
 
@@ -185,27 +203,70 @@ export const ReportDetailsPage = () => {
 
             {/* Photographic Evidence Gallery */}
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Photographic Evidence ({report.images?.length || 0})
-              </h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Photographic Evidence ({report.images?.length || 0})
+                </h3>
+                <span className="text-[11px] font-mono text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                  Bucket: campusfix-evidence
+                </span>
+              </div>
+
               {report.images && report.images.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {report.images.map((imgUrl, index) => (
-                    <div
-                      key={index}
-                      onClick={() => setActivePhoto(imgUrl)}
-                      className="group relative aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer shadow-xs hover:border-blue-400"
-                    >
-                      <img
-                        src={imgUrl}
-                        alt={`Evidence ${index + 1}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/30 transition-colors flex items-center justify-center">
-                        <Maximize2 className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow" />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {report.images.map((imgUrl, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setActivePhoto(imgUrl)}
+                        className="group relative aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer shadow-xs hover:border-blue-400"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`Evidence ${index + 1}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/30 transition-colors flex items-center justify-center">
+                          <Maximize2 className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Photo Storage Metadata Box */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs space-y-1.5 font-mono text-[11px]">
+                    <div className="flex items-center gap-1.5 text-blue-700 font-bold font-sans">
+                      <HardDrive className="w-3.5 h-3.5" />
+                      <span>Supabase Storage Object Metadata</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 pt-1">
+                      <div>
+                        <strong className="text-slate-800 font-sans">File Name:</strong> {report.fileName || 'photo.jpg'}
+                      </div>
+                      <div>
+                        <strong className="text-slate-800 font-sans">File Size:</strong> {formatFileSize(report.fileSize)}
+                      </div>
+                      <div>
+                        <strong className="text-slate-800 font-sans">MIME Type:</strong> {report.mimeType || 'image/jpeg'}
+                      </div>
+                      <div>
+                        <strong className="text-slate-800 font-sans">Public URL:</strong>{' '}
+                        {report.photoUrl ? (
+                          <a
+                            href={report.photoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline inline-flex items-center gap-0.5 truncate max-w-[180px] align-bottom"
+                          >
+                            <span>Open in Tab</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        ) : (
+                          'Direct URL'
+                        )}
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               ) : (
                 <div className="p-6 rounded-xl bg-slate-50 border border-slate-100 text-center text-xs text-slate-400">
@@ -281,8 +342,9 @@ export const ReportDetailsPage = () => {
         <div className="lg:col-span-4 space-y-6">
           {/* Progress Timeline Card */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">
-              Repair Progress Stepper
+            <h3 className="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100 flex items-center justify-between">
+              <span>Repair Progress Stepper</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Live database synchronization" />
             </h3>
 
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
@@ -296,7 +358,7 @@ export const ReportDetailsPage = () => {
                 <div>
                   <p className="text-xs font-bold text-slate-800">1. Complaint Received</p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Logged in system with photo evidence.
+                    Logged in Supabase with photo evidence.
                   </p>
                   <span className="text-[10px] text-slate-400 mt-1 block">
                     {formatDate(report.createdAt)}
@@ -465,9 +527,10 @@ export const ReportDetailsPage = () => {
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md"
+                disabled={isUpdating}
+                className="px-5 py-2 bg-[#174D91] hover:bg-[#133F77] text-white rounded-xl font-bold shadow-xs disabled:opacity-50"
               >
-                Save Status Changes
+                {isUpdating ? 'Saving to Supabase...' : 'Save Status Changes'}
               </button>
             </div>
           </form>

@@ -81,7 +81,7 @@ export const MyReportsPage = () => {
 
         <Link
           to="/student/submit"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#E9432B] hover:bg-[#D3341D] text-white rounded-xl text-sm font-semibold shadow-xs transition-all"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Report New Issue</span>
@@ -102,17 +102,17 @@ export const MyReportsPage = () => {
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-[#174D91] text-white shadow-xs font-semibold'
                   : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
               }`}
             >
               <span>{status}</span>
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                   isActive
-                    ? 'bg-blue-700 text-white'
+                    ? 'bg-[#0E3666] text-white'
                     : 'bg-slate-100 text-slate-600'
                 }`}
               >

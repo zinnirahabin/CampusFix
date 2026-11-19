@@ -16,6 +16,7 @@ import {
   ArrowRight,
   Sparkles,
   Info,
+  FileCheck,
 } from 'lucide-react'
 
 export const SubmitReportPage = () => {
@@ -25,7 +26,7 @@ export const SubmitReportPage = () => {
 
   const [formData, setFormData] = useState({
     title: '',
-    category: 'Air Conditioning',
+    category: 'Broken Chair',
     building: 'College of Computing & Informatics (CCI)',
     floor: 'Level 2',
     room: '',
@@ -33,9 +34,14 @@ export const SubmitReportPage = () => {
     description: '',
   })
 
-  const [images, setImages] = useState([
-    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80',
-  ])
+  // Selected file or image preview
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('https://images.unsplash.com/photo-1580481077195-c3a821a58875?auto=format&fit=crop&w=800&q=80')
+  const [fileMeta, setFileMeta] = useState({
+    name: 'broken_chair_sample.jpg',
+    size: '245 KB',
+    type: 'image/jpeg',
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -58,11 +64,11 @@ export const SubmitReportPage = () => {
   ]
 
   const samplePhotoOptions = [
-    { label: 'AC Leakage', url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Water Pipe Leak', url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Projector Issue', url: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Broken Furniture', url: 'https://images.unsplash.com/photo-1580481077195-c3a821a58875?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Electrical Wiring', url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80' },
+    { label: 'Broken Chair', category: 'Broken Chair', title: 'Defective Student Chair with Broken Armrest', url: 'https://images.unsplash.com/photo-1580481077195-c3a821a58875?auto=format&fit=crop&w=800&q=80' },
+    { label: 'Damaged Projector', category: 'Damaged Classroom Projector', title: 'Ceiling Projector Blinking and Dim Display', url: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80' },
+    { label: 'Leaking Water Pipe', category: 'Leaking Water Pipe', title: 'High Pressure Water Pipe Leak Flooding Restroom', url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80' },
+    { label: 'AC Leakage', category: 'Air Conditioning', title: 'Ceiling AC Dripping Water Continuously', url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80' },
+    { label: 'Electrical Wiring', category: 'Electrical Problems', title: 'Flickering Lights and Loose Switch Faceplate', url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80' },
   ]
 
   const handleChange = (e) => {
@@ -73,26 +79,53 @@ export const SubmitReportPage = () => {
     setError('')
   }
 
+  const formatFileSize = (bytes) => {
+    if (!bytes) return 'Unknown size'
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / 1048576).toFixed(2) + ' MB'
+  }
+
   const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files)
-    if (files.length > 0) {
-      // Mock converting file to object URL preview
-      const newUrls = files.map((file) => URL.createObjectURL(file))
-      setImages((prev) => [...prev, ...newUrls])
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Photo size must not exceed 10MB.')
+        return
+      }
+      setSelectedFile(file)
+      setImagePreview(URL.createObjectURL(file))
+      setFileMeta({
+        name: file.name,
+        size: formatFileSize(file.size),
+        type: file.type || 'image/jpeg',
+      })
+      setError('')
     }
   }
 
-  const handleRemoveImage = (indexToRemove) => {
-    setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove))
+  const handleSelectSample = (sample) => {
+    setSelectedFile(null)
+    setImagePreview(sample.url)
+    setFileMeta({
+      name: `${sample.label.toLowerCase().replace(/\s+/g, '_')}.jpg`,
+      size: '320 KB',
+      type: 'image/jpeg',
+    })
+    setFormData((prev) => ({
+      ...prev,
+      category: sample.category,
+      title: prev.title || sample.title,
+    }))
   }
 
-  const handleAddSamplePhoto = (url) => {
-    if (!images.includes(url)) {
-      setImages((prev) => [...prev, url])
-    }
+  const handleRemoveImage = () => {
+    setSelectedFile(null)
+    setImagePreview(null)
+    setFileMeta(null)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.title.trim()) {
       setError('Please provide a brief title describing the problem.')
@@ -108,35 +141,41 @@ export const SubmitReportPage = () => {
     }
 
     setIsSubmitting(true)
+    setError('')
 
-    setTimeout(() => {
-      const newReport = addReport(
+    try {
+      const newReport = await addReport(
         {
           ...formData,
-          images,
+          images: imagePreview ? [imagePreview] : [],
         },
-        user
+        user,
+        selectedFile
       )
 
       setIsSubmitting(false)
-      setCreatedReportId(newReport.id)
+      setCreatedReportId(newReport.id || newReport.reportNumber)
       setShowSuccessModal(true)
-    }, 600)
+    } catch (err) {
+      console.error('Failed to submit report:', err)
+      setError(err.message || 'Failed to submit report to Supabase. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#174D91] text-xs font-semibold mb-2">
           <Camera className="w-3.5 h-3.5" />
-          <span>New Facility Complaint</span>
+          <span>New Facility Incident Report</span>
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Submit Maintenance Report
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Provide accurate details and photos to help facilities technicians diagnose and resolve the issue quickly.
+          Photographic evidence is uploaded directly to Supabase Storage (<code className="text-[#174D91] bg-blue-50 px-1.5 py-0.5 rounded font-mono text-[11px]">campusfix-evidence</code>) and tracked in real-time.
         </p>
       </div>
 
@@ -158,10 +197,10 @@ export const SubmitReportPage = () => {
             <span className="text-xs font-semibold text-rose-500">* Required</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {categories.map((cat) => {
               const Icon = getCategoryIcon(cat.name)
-              const isSelected = formData.category === cat.name
+              const isSelected = formData.category.toLowerCase() === cat.name.toLowerCase()
               return (
                 <button
                   type="button"
@@ -169,22 +208,22 @@ export const SubmitReportPage = () => {
                   onClick={() => setFormData({ ...formData, category: cat.name })}
                   className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between h-24 ${
                     isSelected
-                      ? 'border-blue-600 bg-blue-50/80 ring-2 ring-blue-600/20 shadow-xs'
+                      ? 'border-[#174D91] bg-blue-50/80 ring-2 ring-[#174D91]/20 shadow-xs'
                       : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
+                      isSelected ? 'bg-[#174D91] text-white' : 'bg-slate-100 text-slate-600'
                     }`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     {isSelected && (
-                      <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                      <CheckCircle2 className="w-4 h-4 text-[#174D91]" />
                     )}
                   </div>
-                  <span className={`text-xs font-bold leading-tight ${
-                    isSelected ? 'text-blue-900' : 'text-slate-700'
+                  <span className={`text-xs font-bold leading-tight line-clamp-2 ${
+                    isSelected ? 'text-[#174D91]' : 'text-slate-700'
                   }`}>
                     {cat.name}
                   </span>
@@ -284,7 +323,7 @@ export const SubmitReportPage = () => {
                 value={formData.title}
                 onChange={handleChange}
                 required
-                placeholder="e.g. Broken overhead projector blinking purple in LT1"
+                placeholder="e.g. Broken student chair or leaking water pipe in restroom"
                 className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -330,34 +369,45 @@ export const SubmitReportPage = () => {
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">4. Photographic Evidence</h2>
-              <p className="text-xs text-slate-500">Upload photos of the defect to fast-track approval</p>
+              <h2 className="text-sm font-bold text-slate-900">4. Photographic Evidence (Supabase Storage)</h2>
+              <p className="text-xs text-slate-500">
+                Uploaded image is stored in <code className="text-blue-600 bg-blue-50 px-1 py-0.5 rounded font-mono text-[11px]">campusfix-evidence</code> bucket; URL & metadata are saved in SQL.
+              </p>
             </div>
-            <span className="text-xs font-medium text-slate-400">Recommended</span>
+            <span className="text-xs font-semibold text-blue-600">Storage Integrated</span>
           </div>
 
-          {/* Drag & Drop Zone */}
+          {/* Drag & Drop / File Input Zone */}
           <div className="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl p-6 text-center transition-colors bg-slate-50/50">
             <UploadCloud className="w-10 h-10 text-blue-500 mx-auto mb-2" />
             <p className="text-xs font-bold text-slate-700">
-              Drag and drop incident photographs, or <label className="text-blue-600 hover:underline cursor-pointer">browse files<input type="file" multiple accept="image/*" onChange={handleFileUpload} className="hidden" /></label>
+              Drag and drop incident photographs, or{' '}
+              <label className="text-blue-600 hover:underline cursor-pointer font-bold">
+                browse files
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/jpg"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
             </p>
-            <p className="text-[11px] text-slate-400 mt-1">Supports PNG, JPG, JPEG up to 10MB</p>
+            <p className="text-[11px] text-slate-400 mt-1">Supports PNG, JPG, WEBP up to 10MB</p>
           </div>
 
           {/* Quick Preset Buttons for Demonstration */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Quick Demo Sample Photos:</span>
+              <span>Or Choose Sample Complaint Photo:</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {samplePhotoOptions.map((sample, idx) => (
                 <button
                   type="button"
                   key={idx}
-                  onClick={() => handleAddSamplePhoto(sample.url)}
-                  className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-medium text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                  onClick={() => handleSelectSample(sample)}
+                  className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-medium text-slate-700 hover:border-blue-500 hover:text-blue-600 transition-colors shadow-2xs"
                 >
                   + {sample.label}
                 </button>
@@ -365,29 +415,39 @@ export const SubmitReportPage = () => {
             </div>
           </div>
 
-          {/* Uploaded Images Preview Gallery */}
-          {images.length > 0 && (
+          {/* Uploaded Image Preview & Metadata */}
+          {imagePreview && (
             <div className="pt-2">
               <span className="text-xs font-semibold text-slate-700 mb-2 block">
-                Attached Images ({images.length})
+                Evidence Photo Attached:
               </span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {images.map((imgUrl, index) => (
-                  <div key={index} className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-video bg-slate-100">
-                    <img src={imgUrl} alt={`Upload ${index + 1}`} className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-1.5 right-1.5 p-1 rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition-colors"
-                      title="Remove image"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="absolute bottom-1.5 left-1.5 bg-slate-900/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
-                      Photo #{index + 1}
-                    </span>
+              <div className="flex flex-col sm:flex-row items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="relative group rounded-xl overflow-hidden border border-slate-300 aspect-video w-full sm:w-48 bg-slate-200 shrink-0">
+                  <img src={imagePreview} alt="Evidence preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-1.5 right-1.5 p-1 rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition-colors"
+                    title="Remove image"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                    <FileCheck className="w-4 h-4 text-emerald-600" />
+                    <span>Ready for Supabase Storage Upload</span>
                   </div>
-                ))}
+                  {fileMeta && (
+                    <div className="space-y-1 text-slate-600 font-mono text-[11px]">
+                      <div><strong className="text-slate-800">File Name:</strong> {fileMeta.name}</div>
+                      <div><strong className="text-slate-800">File Size:</strong> {fileMeta.size}</div>
+                      <div><strong className="text-slate-800">MIME Type:</strong> {fileMeta.type}</div>
+                      <div><strong className="text-slate-800">Target Bucket:</strong> campusfix-evidence</div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -405,13 +465,13 @@ export const SubmitReportPage = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/25 transition-all flex items-center gap-2"
+            className="px-6 py-3 bg-[#174D91] hover:bg-[#133F77] disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-2"
           >
             {isSubmitting ? (
-              <span>Submitting Report...</span>
+              <span>Uploading Evidence & Submitting...</span>
             ) : (
               <>
-                <span>Submit Maintenance Report</span>
+                <span>Submit to Facilities Desk</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -435,7 +495,7 @@ export const SubmitReportPage = () => {
                 Report Submitted Successfully!
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                Your report has been logged in the UNITEN CampusFix central repository with status <strong className="text-amber-600">Pending Review</strong>.
+                Your report and photo evidence have been logged in the UNITEN central database with status <strong className="text-amber-600 font-bold">Pending Review</strong>.
               </p>
             </div>
 
@@ -443,7 +503,7 @@ export const SubmitReportPage = () => {
               <button
                 type="button"
                 onClick={() => navigate(`/reports/${createdReportId}`)}
-                className="flex-1 py-2.5 px-4 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700"
+                className="flex-1 py-2.5 px-4 bg-[#174D91] text-white rounded-xl text-xs font-bold hover:bg-[#133F77]"
               >
                 View Report Details
               </button>

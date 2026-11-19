@@ -2,17 +2,16 @@ import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
-  Wrench,
   ShieldCheck,
   UserCheck,
   LogOut,
   Bell,
   Menu,
   X,
-  ExternalLink,
   ChevronDown,
   Building2,
   User,
+  ExternalLink,
 } from 'lucide-react'
 
 export const Navbar = ({ onToggleSidebar }) => {
@@ -38,68 +37,71 @@ export const Navbar = ({ onToggleSidebar }) => {
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200/80 shadow-sm">
+    <header className="sticky top-0 z-40 bg-white border-b border-slate-200/80 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left: Brand & Mobile Menu Button */}
+          {/* Left: UNITEN Brand & Logo */}
           <div className="flex items-center gap-3">
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
               aria-label="Toggle Navigation"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                <Wrench className="w-5 h-5" />
-              </div>
+            <Link to="/" className="flex items-center gap-3 group">
+              <img
+                src="/images/uniten-logo.png"
+                alt="Universiti Tenaga Nasional Logo"
+                className="h-10 w-auto object-contain shrink-0"
+              />
+              <div className="h-6 w-px bg-slate-200 hidden sm:block" />
               <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
-                  Campus<span className="text-blue-600">Fix</span>
+                <span className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-[#174D91] transition-colors flex items-center">
+                  Campus<span className="text-[#E9432B]">Fix</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 -mt-1">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500 -mt-0.5">
                   UNITEN Facility Portal
                 </span>
               </div>
             </Link>
           </div>
 
-          {/* Center: Demo Quick Role Switcher Pill */}
-          <div className="hidden md:flex items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200">
-            <span className="text-xs font-medium px-2.5 text-slate-500">Demo Role:</span>
+          {/* Center: Quick Role Switcher Pill */}
+          <div className="hidden md:flex items-center bg-[#F3F5F8] p-1 rounded-xl border border-slate-200">
+            <span className="text-xs font-medium px-2.5 text-slate-500">Role View:</span>
             <button
               onClick={() => {
                 switchRole('student')
                 if (!location.pathname.startsWith('/student')) navigate('/student/dashboard')
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
                 isStudent
-                  ? 'bg-white text-blue-700 shadow-sm'
+                  ? 'bg-white text-[#174D91] shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <UserCheck className="w-4 h-4" />
-              Student View
+              <UserCheck className="w-4 h-4 text-[#174D91]" />
+              <span>Student</span>
             </button>
             <button
               onClick={() => {
                 switchRole('admin')
                 if (!location.pathname.startsWith('/admin')) navigate('/admin/dashboard')
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
                 isAdmin
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-[#174D91] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <ShieldCheck className="w-4 h-4" />
-              Admin View
+              <ShieldCheck className="w-4 h-4 text-[#E9432B]" />
+              <span>Administrator</span>
             </button>
           </div>
 
-          {/* Right: Actions & User Info */}
+          {/* Right: Notifications & User Profile */}
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
             <div className="relative">
@@ -109,25 +111,25 @@ export const Navbar = ({ onToggleSidebar }) => {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#E9432B] rounded-full ring-2 ring-white"></span>
               </button>
 
               {showNotificationToast && (
-                <div className="absolute right-0 mt-2 w-88 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 z-50 text-sm">
-                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 font-bold text-slate-800 text-sm">
-                    <span>Recent Alerts</span>
-                    <span className="text-xs text-blue-600 font-semibold px-2 py-0.5 rounded-full bg-blue-50">2 new</span>
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-4 z-50 text-sm">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 font-bold text-slate-800">
+                    <span>UNITEN Campus Notices</span>
+                    <span className="text-xs text-[#E9432B] font-semibold px-2 py-0.5 rounded-full bg-red-50">2 new</span>
                   </div>
                   <div className="mt-3 space-y-2.5">
-                    <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-100/60 text-slate-700">
-                      <p className="font-bold text-blue-900 text-sm">CF-2024-001 Updated</p>
-                      <p className="text-xs text-slate-600 mt-1">HVAC technician assigned to CCI Lab 402 AC leak.</p>
-                      <span className="text-[11px] text-slate-400 mt-1.5 block">15 mins ago</span>
+                    <div className="p-3 rounded-xl bg-blue-50/60 border border-blue-100 text-slate-700">
+                      <p className="font-bold text-[#174D91] text-xs">Work Order Dispatched</p>
+                      <p className="text-xs text-slate-600 mt-1">Technician assigned to inspect classroom lighting fault.</p>
+                      <span className="text-[11px] text-slate-400 mt-1 block">Just now</span>
                     </div>
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-700">
-                      <p className="font-bold text-slate-900 text-sm">Scheduled Maintenance</p>
-                      <p className="text-xs text-slate-600 mt-1">Water supply shutoff for Library Annex tomorrow 2 AM - 5 AM.</p>
-                      <span className="text-[11px] text-slate-400 mt-1.5 block">2 hours ago</span>
+                      <p className="font-bold text-slate-800 text-xs">Scheduled Maintenance</p>
+                      <p className="text-xs text-slate-600 mt-1">COE water pipe upgrade scheduled this Saturday 9 AM.</p>
+                      <span className="text-[11px] text-slate-400 mt-1 block">2 hours ago</span>
                     </div>
                   </div>
                 </div>
@@ -144,26 +146,26 @@ export const Navbar = ({ onToggleSidebar }) => {
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-600/20"
+                    className="w-8 h-8 rounded-full object-cover ring-2 ring-[#174D91]/20"
                   />
                   <div className="hidden sm:flex flex-col text-left">
                     <span className="text-xs font-semibold text-slate-800 leading-tight">
                       {user.name}
                     </span>
                     <span className="text-[10px] text-slate-500 capitalize">
-                      {isAdmin ? 'Facilities Administrator' : `Student • ${user.id || ''}`}
+                      {isAdmin ? 'Facilities Admin' : `Student • ${user.id || ''}`}
                     </span>
                   </div>
                   <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in-50 zoom-in-95 duration-100">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in-50 zoom-in-95 duration-100">
                     <div className="px-4 py-3 border-b border-slate-100">
                       <p className="text-sm font-bold text-slate-900">{user.name}</p>
                       <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
-                      <span className={`inline-block mt-1.5 text-[11px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                        isAdmin ? 'bg-indigo-100 text-indigo-700' : 'bg-blue-100 text-blue-700'
+                      <span className={`inline-block mt-1.5 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                        isAdmin ? 'bg-red-50 text-[#E9432B]' : 'bg-blue-50 text-[#174D91]'
                       }`}>
                         {user.role}
                       </span>
@@ -185,7 +187,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                           className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                         >
                           <User className="w-4 h-4 text-slate-400" />
-                          <span>Student Profile Settings</span>
+                          <span>Student Profile</span>
                         </Link>
                       )}
                       <button
@@ -215,9 +217,9 @@ export const Navbar = ({ onToggleSidebar }) => {
                           setShowProfileMenu(false)
                           handleLogout()
                         }}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#E9432B] hover:bg-red-50 transition-colors text-left"
                       >
-                        <LogOut className="w-4 h-4 text-rose-500" />
+                        <LogOut className="w-4 h-4 text-[#E9432B]" />
                         <span>Sign Out</span>
                       </button>
                     </div>
@@ -228,13 +230,13 @@ export const Navbar = ({ onToggleSidebar }) => {
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-3.5 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
+                  className="px-3.5 py-2 text-sm font-medium text-slate-700 hover:text-[#174D91] transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-sm transition-all"
+                  className="px-4 py-2 text-sm font-semibold bg-[#174D91] text-white rounded-xl hover:bg-[#133F77] shadow-xs transition-all"
                 >
                   Register
                 </Link>
