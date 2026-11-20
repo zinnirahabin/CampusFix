@@ -84,6 +84,7 @@ export const ReportProvider = ({ children }) => {
           status: 'Active',
           totalReports: 0,
           joinedDate: p.created_at ? p.created_at.split('T')[0] : '2024-01-01',
+          role: p.role || 'student',
         }))
         setStudents(mappedStudents)
         return data.reduce((acc, curr) => {
@@ -129,6 +130,7 @@ export const ReportProvider = ({ children }) => {
 
     initData()
 
+  
     // Real-time subscription to reports table
     const reportsChannel = supabase
       .channel('public:reports')
@@ -153,9 +155,24 @@ export const ReportProvider = ({ children }) => {
       )
       .subscribe()
 
+    // Real-time subscription to profiles (students) table
+    const profilesChannel = supabase
+      .channel('public:profiles')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        async () => {
+          // Refresh students and update map for reports
+          profilesMap = await fetchStudents()
+          await fetchReports(profilesMap)
+        }
+      )
+      .subscribe()
+
     return () => {
       supabase.removeChannel(reportsChannel)
       supabase.removeChannel(categoriesChannel)
+      supabase.removeChannel(profilesChannel)
     }
   }, [fetchCategories, fetchStudents, fetchReports])
 

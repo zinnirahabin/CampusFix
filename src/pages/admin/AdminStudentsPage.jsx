@@ -18,6 +18,9 @@ import {
 export const AdminStudentsPage = () => {
   const { students, reports } = useReports()
 
+  // Filter only student role records (exclude admins)
+  const studentOnly = useMemo(() => students.filter((s) => s.role === 'student'), [students])
+
   const [searchQuery, setSearchQuery] = useState('')
   const [facultyFilter, setFacultyFilter] = useState('All')
 
@@ -29,7 +32,7 @@ export const AdminStudentsPage = () => {
   ]
 
   const filteredStudents = useMemo(() => {
-    return students.filter((s) => {
+    return studentOnly.filter((s) => {
       const query = searchQuery.toLowerCase()
       const matchesSearch =
         s.name.toLowerCase().includes(query) ||
@@ -41,7 +44,7 @@ export const AdminStudentsPage = () => {
 
       return matchesSearch && matchesFaculty
     })
-  }, [students, searchQuery, facultyFilter])
+  }, [studentOnly, searchQuery, facultyFilter])
 
   return (
     <div className="space-y-6">
@@ -58,7 +61,7 @@ export const AdminStudentsPage = () => {
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-[#174D91] border border-blue-200">
-            Total Students: {students.length}
+            Total Students: {studentOnly.length}
           </span>
         </div>
       </div>

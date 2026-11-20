@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
       try {
         return JSON.parse(saved)
       } catch (e) {
+        // If parsing fails, fall back to mock student (should not happen)
         return MOCK_STUDENT_USER
       }
     }
