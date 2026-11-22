@@ -68,17 +68,26 @@ export const AdminReportsPage = () => {
     setModalAdminNotes(report.adminNotes || '')
   }
 
-  const handleUpdateSubmit = (e) => {
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
     if (!activeModalReport) return
 
-    updateReportStatus(
-      activeModalReport.id,
-      modalStatus,
-      modalAdminNotes,
-      modalAssignedTo
-    )
-    setActiveModalReport(null)
+    setIsUpdating(true)
+    try {
+      await updateReportStatus(
+        activeModalReport.id,
+        modalStatus,
+        modalAdminNotes,
+        modalAssignedTo
+      )
+      setActiveModalReport(null)
+    } catch (err) {
+      alert('Error updating report status in Supabase: ' + err.message)
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   const handleExportCSV = () => {
@@ -403,9 +412,10 @@ export const AdminReportsPage = () => {
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md"
+                disabled={isUpdating}
+                className="px-5 py-2 bg-[#174D91] hover:bg-[#133F77] disabled:opacity-50 text-white rounded-xl font-bold shadow-xs"
               >
-                Save Status Update
+                {isUpdating ? 'Saving to Supabase...' : 'Save Status Update'}
               </button>
             </div>
           </form>

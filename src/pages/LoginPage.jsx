@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
-  Wrench,
   ShieldCheck,
   UserCheck,
   Mail,
@@ -12,6 +11,7 @@ import {
   EyeOff,
   AlertCircle,
   Building2,
+  CheckCircle2,
 } from 'lucide-react'
 
 export const LoginPage = () => {
@@ -25,6 +25,7 @@ export const LoginPage = () => {
   const [password, setPassword] = useState('password123')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -36,96 +37,96 @@ export const LoginPage = () => {
     } else {
       setEmail('aiman@student.uniten.edu.my')
     }
+    setPassword('password123')
     setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!email || !password) {
-      setError('Please provide both email and password.')
+      setError('Please provide both your email address and password.')
       return
     }
 
-    const res = login(email, password, role)
-    if (res.success) {
-      if (role === 'admin') {
-        navigate('/admin/dashboard')
+    setIsLoggingIn(true)
+    setError('')
+    try {
+      const res = await login(email, password, role)
+      if (res.success) {
+        if (role === 'admin') {
+          navigate('/admin/dashboard')
+        } else {
+          navigate('/student/dashboard')
+        }
       } else {
-        navigate('/student/dashboard')
+        setError(res.error || 'Invalid credentials. Please verify your email and password.')
       }
+    } catch (err) {
+      setError(err.message || 'Login failed')
+    } finally {
+      setIsLoggingIn(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* Top Brand */}
+    <div className="min-h-screen bg-[#F3F5F8] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Top Brand with UNITEN Official Logo */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link to="/" className="inline-flex items-center gap-2.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25">
-            <Wrench className="w-6 h-6" />
-          </div>
-          <div className="text-left">
-            <span className="text-2xl font-extrabold tracking-tight text-slate-900">
-              Campus<span className="text-blue-600">Fix</span>
-            </span>
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Universiti Tenaga Nasional
-            </span>
-          </div>
+        <Link to="/" className="inline-block group mb-3">
+          <img
+            src="/images/uniten-logo.png"
+            alt="Universiti Tenaga Nasional"
+            className="h-16 w-auto mx-auto object-contain group-hover:scale-105 transition-transform"
+          />
         </Link>
-        <h2 className="mt-6 text-2xl font-bold tracking-tight text-slate-900">
-          Sign in to your account
-        </h2>
-        <p className="mt-1 text-xs text-slate-500">
-          Campus Facility Issue Reporting and Management System
+        <div className="flex items-center justify-center gap-1.5 mt-2">
+          <span className="text-2xl font-bold tracking-tight text-slate-900">
+            Campus<span className="text-[#E9432B]">Fix</span>
+          </span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#174D91]">
+            UNITEN
+          </span>
+        </div>
+        <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
+          Sign In to Your Account
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Campus Facility Issue Reporting and Maintenance Platform
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-200/80 sm:px-10">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-6 shadow-sm rounded-2xl border border-slate-200 sm:px-10 space-y-6">
           {/* Role Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl mb-6">
+          <div className="grid grid-cols-2 gap-2 p-1 bg-[#F3F5F8] rounded-xl border border-slate-200">
             <button
               type="button"
               onClick={() => handleRoleChange('student')}
-              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-all ${
                 role === 'student'
-                  ? 'bg-white text-blue-700 shadow-sm'
+                  ? 'bg-white text-[#174D91] shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <UserCheck className="w-4 h-4" />
+              <UserCheck className="w-4 h-4 text-[#174D91]" />
               <span>Student</span>
             </button>
             <button
               type="button"
               onClick={() => handleRoleChange('admin')}
-              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-all ${
                 role === 'admin'
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-[#174D91] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <ShieldCheck className="w-4 h-4" />
+              <ShieldCheck className="w-4 h-4 text-[#E9432B]" />
               <span>Administrator</span>
             </button>
           </div>
 
-          {/* Quick Demo Fill Notice */}
-          <div className="mb-5 p-3 rounded-xl bg-blue-50/70 border border-blue-200/70 text-xs text-blue-900 flex items-start gap-2.5">
-            <Building2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold">Demo Mode Credentials Active</p>
-              <p className="text-[11px] text-blue-700 mt-0.5">
-                {role === 'student'
-                  ? 'Logging in as Student (Aiman Hakim - SW0108321)'
-                  : 'Logging in as Admin (En. Razak Sulaiman - Facilities Dept)'}
-              </p>
-            </div>
-          </div>
-
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+            <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-[#E9432B] text-xs font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -133,8 +134,8 @@ export const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {role === 'student' ? 'Student University Email' : 'Staff Admin Email'}
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                {role === 'admin' ? 'Administrator Email' : 'Student Email'}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -145,24 +146,24 @@ export const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder={role === 'student' ? 'student@uniten.edu.my' : 'admin@campusfix.uniten.edu.my'}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder={role === 'admin' ? 'admin@campusfix.uniten.edu.my' : 'student@student.uniten.edu.my'}
+                  className="w-full pl-9 pr-3.5 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-slate-700">
+                <label className="block text-sm font-medium text-slate-700">
                   Password
                 </label>
                 <a
                   href="#forgot"
                   onClick={(e) => {
                     e.preventDefault()
-                    alert('For demonstration purposes, password is pre-filled. Click "Sign In" to enter.')
+                    alert('For student password reset, please contact the UNITEN IT Helpdesk at helpdesk@uniten.edu.my or Ext 2020.')
                   }}
-                  className="text-[11px] font-medium text-blue-600 hover:underline"
+                  className="text-xs font-medium text-[#174D91] hover:underline"
                 >
                   Forgot password?
                 </a>
@@ -176,7 +177,8 @@ export const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-9 pr-10 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                  className="w-full pl-9 pr-10 py-2.5 text-sm font-normal text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#174D91] min-h-[44px]"
                 />
                 <button
                   type="button"
@@ -188,65 +190,41 @@ export const LoginPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 text-slate-600 cursor-pointer">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span>Remember this workstation</span>
-              </label>
+            {/* Demo Credentials Reminder Note */}
+            <div className="p-3 rounded-xl bg-[#F3F5F8] border border-slate-200 text-xs text-slate-600 space-y-1">
+              <span className="font-semibold text-slate-800 block">Pre-configured Demonstration Account:</span>
+              <div className="flex justify-between items-center text-[11px] text-slate-500 font-mono">
+                <span>{role === 'admin' ? 'admin@campusfix.uniten.edu.my' : 'aiman@student.uniten.edu.my'}</span>
+                <span className="text-emerald-700 font-bold">password123</span>
+              </div>
             </div>
 
-            <button
-              type="submit"
-              className="w-full mt-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/25 transition-all flex items-center justify-center gap-2"
-            >
-              <span>Sign In as {role === 'student' ? 'Student' : 'Administrator'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div>
+              <button
+                type="submit"
+                disabled={isLoggingIn}
+                className="w-full py-3 px-4 rounded-xl bg-[#174D91] hover:bg-[#133F77] text-white font-semibold text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isLoggingIn ? (
+                  <span>Authenticating...</span>
+                ) : (
+                  <>
+                    <span>Sign In to CampusFix</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
           </form>
 
-          {/* Quick 1-Click Role Switch for Demo */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <span className="text-[11px] text-slate-400 font-medium block text-center mb-2.5">
-              1-Click Demo Login
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  handleRoleChange('student')
-                  login('aiman@student.uniten.edu.my', 'password', 'student')
-                  navigate('/student/dashboard')
-                }}
-                className="py-2 px-3 border border-slate-200 rounded-lg text-[11px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-1.5"
-              >
-                <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                <span>Student Login</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  handleRoleChange('admin')
-                  login('admin@campusfix.uniten.edu.my', 'password', 'admin')
-                  navigate('/admin/dashboard')
-                }}
-                className="py-2 px-3 border border-slate-200 rounded-lg text-[11px] font-semibold text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-1.5"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Admin Login</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Registration Link */}
-          <div className="mt-6 text-center text-xs text-slate-500">
-            <span>New student at UNITEN? </span>
-            <Link to="/register" className="font-semibold text-blue-600 hover:underline">
-              Create an account
-            </Link>
+          {/* Bottom Switch to Register */}
+          <div className="border-t border-slate-100 pt-4 text-center">
+            <p className="text-sm text-slate-500">
+              New UNITEN student?{' '}
+              <Link to="/register" className="font-semibold text-[#174D91] hover:underline">
+                Register for an account
+              </Link>
+            </p>
           </div>
         </div>
       </div>

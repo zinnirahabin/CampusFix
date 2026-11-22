@@ -49,12 +49,21 @@ export const AdminDashboard = () => {
     setAdminNotes(report.adminNotes || '')
   }
 
-  const handleStatusSubmit = (e) => {
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  const handleStatusSubmit = async (e) => {
     e.preventDefault()
     if (!editingReport) return
 
-    updateReportStatus(editingReport.id, newStatus, adminNotes, assignedTech)
-    setEditingReport(null)
+    setIsUpdating(true)
+    try {
+      await updateReportStatus(editingReport.id, newStatus, adminNotes, assignedTech)
+      setEditingReport(null)
+    } catch (err) {
+      alert('Error updating status in Supabase: ' + err.message)
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   // Count reports by category
@@ -74,33 +83,33 @@ export const AdminDashboard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
-              Campus Facilities & Maintenance Centre
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E9432B]" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[#174D91]">
+              UNITEN Facilities & Maintenance Directorate
             </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Operations & Maintenance Dashboard
+            Operations & Maintenance Overview
           </h1>
           <p className="text-xs text-slate-500">
-            Real-time facility telemetry, triage queue, and technician dispatch
+            Real-time telemetry, triage queue, and technician dispatch for Putrajaya & Muadzam Shah campuses
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => {
-              if (window.confirm('Reset all mock reports and data to default university seed values?')) {
+              if (window.confirm('Reload and synchronize all reports directly from Supabase?')) {
                 resetToSampleData()
               }
             }}
-            className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
           >
-            Reset Demo Data
+            Sync Database
           </button>
           <Link
             to="/admin/reports"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#174D91] hover:bg-[#133F77] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <FileText className="w-4 h-4" />
             <span>Manage All Reports</span>

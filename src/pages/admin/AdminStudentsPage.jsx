@@ -18,6 +18,9 @@ import {
 export const AdminStudentsPage = () => {
   const { students, reports } = useReports()
 
+  // Filter only student role records (exclude admins)
+  const studentOnly = useMemo(() => students.filter((s) => s.role === 'student'), [students])
+
   const [searchQuery, setSearchQuery] = useState('')
   const [facultyFilter, setFacultyFilter] = useState('All')
 
@@ -29,7 +32,7 @@ export const AdminStudentsPage = () => {
   ]
 
   const filteredStudents = useMemo(() => {
-    return students.filter((s) => {
+    return studentOnly.filter((s) => {
       const query = searchQuery.toLowerCase()
       const matchesSearch =
         s.name.toLowerCase().includes(query) ||
@@ -41,7 +44,7 @@ export const AdminStudentsPage = () => {
 
       return matchesSearch && matchesFaculty
     })
-  }, [students, searchQuery, facultyFilter])
+  }, [studentOnly, searchQuery, facultyFilter])
 
   return (
     <div className="space-y-6">
@@ -57,8 +60,8 @@ export const AdminStudentsPage = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200">
-            Total Students: {students.length}
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-[#174D91] border border-blue-200">
+            Total Students: {studentOnly.length}
           </span>
         </div>
       </div>
@@ -147,13 +150,13 @@ export const AdminStudentsPage = () => {
                           <Mail className="w-3 h-3 text-slate-400" />
                           <span>{s.email}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-                          <Phone className="w-3 h-3 text-slate-400" />
-                          <span>{s.phone}</span>
+                        <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-mono">
+                          <Phone className="w-3 h-3 text-[#174D91]" />
+                          <span>{s.phone || 'No phone recorded'}</span>
                         </div>
                       </td>
                       <td className="py-3.5 px-4 text-center">
-                        <span className="inline-flex items-center justify-center font-bold font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs">
+                        <span className="inline-flex items-center justify-center font-bold font-mono px-2 py-0.5 rounded-full bg-blue-50 text-[#174D91] text-xs">
                           {actualReportCount}
                         </span>
                       </td>

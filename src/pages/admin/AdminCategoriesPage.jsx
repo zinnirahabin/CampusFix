@@ -52,7 +52,7 @@ export const AdminCategoriesPage = () => {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#174D91] hover:bg-[#133F77] text-white rounded-xl text-xs font-bold shadow-xs transition-all"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Add New Category</span>
