@@ -483,6 +483,7 @@ export const ReportProvider = ({ children }) => {
         updateStudent,
         resetToSampleData,
         refreshReports: fetchReports,
+        refreshStudents: fetchStudents,
         stats: {
           total: totalReports,
           pending: pendingReports,

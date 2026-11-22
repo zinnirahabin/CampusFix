@@ -100,6 +100,10 @@ export const ReportDetailsPage = () => {
 
   const handleAdminUpdate = async (e) => {
     e.preventDefault()
+    if (user?.role !== 'admin') {
+      alert('Access Denied: Only users with an Administrator role can update maintenance reports.')
+      return
+    }
     setIsUpdating(true)
     try {
       await updateReportStatus(

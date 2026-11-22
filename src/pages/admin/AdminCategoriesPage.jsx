@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useReports } from '../../context/ReportContext'
+import { useAuth } from '../../context/AuthContext'
 import { getCategoryIcon } from '../../components/common/CategoryBadge'
 import Modal from '../../components/common/Modal'
 import {
@@ -16,6 +17,7 @@ import {
 
 export const AdminCategoriesPage = () => {
   const { categories, reports, addCategory, toggleCategoryStatus } = useReports()
+  const { user } = useAuth()
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [newCatName, setNewCatName] = useState('')
@@ -25,6 +27,10 @@ export const AdminCategoriesPage = () => {
   const handleAddSubmit = (e) => {
     e.preventDefault()
     if (!newCatName.trim()) return
+    if (user?.role !== 'admin') {
+      alert('Access Denied: Only users with an Administrator role can add facility categories.')
+      return
+    }
 
     addCategory({
       name: newCatName.trim(),
@@ -78,7 +84,13 @@ export const AdminCategoriesPage = () => {
                     <Icon className="w-6 h-6" />
                   </div>
                   <button
-                    onClick={() => toggleCategoryStatus(cat.id)}
+                    onClick={() => {
+                      if (user?.role !== 'admin') {
+                        alert('Access Denied: Only users with an Administrator role can modify category statuses.')
+                        return
+                      }
+                      toggleCategoryStatus(cat.id)
+                    }}
                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors"
                   >
                     {cat.active ? (

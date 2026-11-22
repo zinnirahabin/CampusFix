@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useReports } from '../../context/ReportContext'
 import Select from '../../components/common/Select'
 import {
@@ -16,7 +16,13 @@ import {
 } from 'lucide-react'
 
 export const AdminStudentsPage = () => {
-  const { students, reports } = useReports()
+  const { students, reports, refreshStudents } = useReports()
+
+  useEffect(() => {
+    if (refreshStudents) {
+      refreshStudents()
+    }
+  }, [refreshStudents])
 
   // Filter only student role records (exclude admins)
   const studentOnly = useMemo(() => students.filter((s) => s.role === 'student'), [students])

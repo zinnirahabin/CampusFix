@@ -31,8 +31,8 @@ export const Navbar = ({ onToggleSidebar }) => {
     }
   }
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     navigate('/login')
   }
 
@@ -72,11 +72,12 @@ export const Navbar = ({ onToggleSidebar }) => {
           <div className="hidden md:flex items-center bg-[#F3F5F8] p-1 rounded-xl border border-slate-200">
             <span className="text-xs font-medium px-2.5 text-slate-500">Role View:</span>
             <button
+              type="button"
               onClick={() => {
                 switchRole('student')
                 if (!location.pathname.startsWith('/student')) navigate('/student/dashboard')
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
                 isStudent
                   ? 'bg-white text-[#174D91] shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -86,11 +87,12 @@ export const Navbar = ({ onToggleSidebar }) => {
               <span>Student</span>
             </button>
             <button
+              type="button"
               onClick={() => {
                 switchRole('admin')
                 if (!location.pathname.startsWith('/admin')) navigate('/admin/dashboard')
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
                 isAdmin
                   ? 'bg-[#174D91] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -136,15 +138,15 @@ export const Navbar = ({ onToggleSidebar }) => {
               )}
             </div>
 
-            {/* User Profile */}
+            {/* User Profile - Always renders the authenticated user session */}
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+                  className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                   <img
-                    src={user.avatar}
+                    src={user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name || user.email)}`}
                     alt={user.name}
                     className="w-8 h-8 rounded-full object-cover ring-2 ring-[#174D91]/20"
                   />
@@ -153,7 +155,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                       {user.name}
                     </span>
                     <span className="text-[10px] text-slate-500 capitalize">
-                      {isAdmin ? 'Facilities Admin' : `Student • ${user.id || ''}`}
+                      {user.role === 'admin' ? 'Facilities Admin' : `Student • ${user.id || ''}`}
                     </span>
                   </div>
                   <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
@@ -165,7 +167,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                       <p className="text-sm font-bold text-slate-900">{user.name}</p>
                       <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
                       <span className={`inline-block mt-1.5 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                        isAdmin ? 'bg-red-50 text-[#E9432B]' : 'bg-blue-50 text-[#174D91]'
+                        user.role === 'admin' ? 'bg-red-50 text-[#E9432B]' : 'bg-blue-50 text-[#174D91]'
                       }`}>
                         {user.role}
                       </span>
@@ -180,7 +182,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                         <Building2 className="w-4 h-4 text-slate-400" />
                         <span>Dashboard</span>
                       </Link>
-                      {isStudent && (
+                      {user.role === 'student' && (
                         <Link
                           to="/student/profile"
                           onClick={() => setShowProfileMenu(false)}
@@ -195,7 +197,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                           setShowProfileMenu(false)
                           handleRoleToggle()
                         }}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
                       >
                         {isAdmin ? (
                           <>
@@ -217,7 +219,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                           setShowProfileMenu(false)
                           handleLogout()
                         }}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#E9432B] hover:bg-red-50 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#E9432B] hover:bg-red-50 transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="w-4 h-4 text-[#E9432B]" />
                         <span>Sign Out</span>

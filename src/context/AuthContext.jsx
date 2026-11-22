@@ -47,18 +47,24 @@ export const AuthProvider = ({ children }) => {
     const saved = localStorage.getItem('campusfix_auth')
     if (saved) {
       try {
-        return JSON.parse(saved)
+        const parsed = JSON.parse(saved)
+        if (parsed && parsed.email) {
+          return parsed
+        }
       } catch (e) {
-        // If parsing fails, fall back to mock student (should not happen)
-        return MOCK_STUDENT_USER
+        return null
       }
     }
-    return MOCK_STUDENT_USER
+    return null
+  })
+  const [viewRole, setViewRole] = useState(() => {
+    return localStorage.getItem('campusfix_view_role') || 'student'
   })
   const [loading, setLoading] = useState(true)
 
-  // Fetch profile from Supabase and synchronize with student registration data
-  const fetchProfile = async (authUserId, fallbackUser = null) => {
+  // Fetch profile strictly from Supabase public.profiles
+  const fetchProfile = async (authUserId) => {
+    if (!authUserId) return null
     try {
       // 1. Fetch from Supabase profiles table
       const { data: dbProfile, error: dbError } = await supabase
@@ -67,181 +73,188 @@ export const AuthProvider = ({ children }) => {
         .eq('id', authUserId)
         .single()
 
-      // 2. Fetch auth user metadata for fallback phone/details
+      if (dbError || !dbProfile) {
+        console.warn('Profile not found in Supabase public.profiles for ID:', authUserId, dbError)
+        return null
+      }
+
+      // 2. Fetch auth user metadata for fallback phone/details if missing in profile
       const { data: { user: authUser } } = await supabase.auth.getUser()
       const authMeta = authUser?.user_metadata || {}
 
       // 3. Check persistent student registry
-      const userEmail = dbProfile?.email || authUser?.email || fallbackUser?.email
+      const userEmail = dbProfile.email || authUser?.email
       const registryEntry = getStudentFromRegistry(userEmail)
 
-      if (!dbError && dbProfile) {
-        // Resolve telephone number with strict precedence:
-        // A) Database profile phone (if populated)
-        // B) Auth registration metadata phone
-        // C) Persistent student registry phone
-        // D) Only for Aiman demo user: Aiman's phone; for any new student: empty string (NEVER leak Aiman's phone!)
-        let resolvedPhone = dbProfile.phone
-
-        if (!resolvedPhone || resolvedPhone.trim() === '') {
-          if (authMeta.phone && authMeta.phone.trim() !== '') {
-            resolvedPhone = authMeta.phone
-          } else if (registryEntry?.phone && registryEntry.phone.trim() !== '') {
-            resolvedPhone = registryEntry.phone
-          } else if (dbProfile.email === MOCK_STUDENT_USER.email) {
-            resolvedPhone = MOCK_STUDENT_USER.phone
-          } else {
-            resolvedPhone = ''
-          }
-
-          // Backfill database if phone was found in registration metadata but missing in profile
-          if (resolvedPhone && resolvedPhone !== dbProfile.phone) {
-            supabase
-              .from('profiles')
-              .update({ phone: resolvedPhone })
-              .eq('id', authUserId)
-              .then(() => console.log('Synchronized missing telephone number to profiles table'))
-              .catch((err) => console.warn('Could not backfill telephone number:', err))
-          }
+      let resolvedPhone = dbProfile.phone
+      if (!resolvedPhone || resolvedPhone.trim() === '') {
+        if (authMeta.phone && authMeta.phone.trim() !== '') {
+          resolvedPhone = authMeta.phone
+        } else if (registryEntry?.phone && registryEntry.phone.trim() !== '') {
+          resolvedPhone = registryEntry.phone
+        } else if (dbProfile.email === MOCK_STUDENT_USER.email) {
+          resolvedPhone = MOCK_STUDENT_USER.phone
+        } else {
+          resolvedPhone = ''
         }
 
-        const enrichedUser = {
-          id: dbProfile.student_id || dbProfile.id,
-          uuid: dbProfile.id,
-          name: dbProfile.name,
-          email: dbProfile.email,
-          role: dbProfile.role,
-          faculty: dbProfile.faculty || 'College of Computing & Informatics',
-          program: dbProfile.program || 'Bachelor of Software Engineering (Hons)',
-          phone: resolvedPhone || '',
-          department: dbProfile.department || '',
-          hostel: registryEntry?.hostel || (dbProfile.email === MOCK_STUDENT_USER.email ? MOCK_STUDENT_USER.hostel : ''),
-          emergencyContact: registryEntry?.emergencyContact || (dbProfile.email === MOCK_STUDENT_USER.email ? MOCK_STUDENT_USER.emergencyContact : ''),
-          bio: registryEntry?.bio || (dbProfile.email === MOCK_STUDENT_USER.email ? MOCK_STUDENT_USER.bio : ''),
-          avatar: dbProfile.avatar_url || (dbProfile.role === 'admin' ? MOCK_ADMIN_USER.avatar : MOCK_STUDENT_USER.avatar),
+        // Backfill database if phone was found in registration metadata but missing in profile
+        if (resolvedPhone && resolvedPhone !== dbProfile.phone) {
+          supabase
+            .from('profiles')
+            .update({ phone: resolvedPhone })
+            .eq('id', authUserId)
+            .then(() => console.log('Synchronized telephone number to profiles table'))
+            .catch((err) => console.warn('Could not backfill telephone number:', err))
         }
-
-        setUser(enrichedUser)
-        localStorage.setItem('campusfix_auth', JSON.stringify(enrichedUser))
-        saveStudentToRegistry(enrichedUser)
-        return enrichedUser
       }
+
+      const enrichedUser = {
+        id: dbProfile.student_id || dbProfile.id,
+        uuid: dbProfile.id,
+        name: dbProfile.name || (dbProfile.role === 'admin' ? 'Administrator' : 'Student'),
+        email: dbProfile.email,
+        role: dbProfile.role || 'student',
+        faculty: dbProfile.faculty || 'College of Computing & Informatics',
+        program: dbProfile.program || 'Bachelor of Software Engineering (Hons)',
+        phone: resolvedPhone || '',
+        department: dbProfile.department || (dbProfile.role === 'admin' ? 'Campus Facilities & Maintenance Department' : ''),
+        hostel: registryEntry?.hostel || (dbProfile.email === MOCK_STUDENT_USER.email ? MOCK_STUDENT_USER.hostel : ''),
+        emergencyContact: registryEntry?.emergencyContact || (dbProfile.email === MOCK_STUDENT_USER.email ? MOCK_STUDENT_USER.emergencyContact : ''),
+        bio: registryEntry?.bio || (dbProfile.email === MOCK_STUDENT_USER.email ? MOCK_STUDENT_USER.bio : ''),
+        avatar: dbProfile.avatar_url || (dbProfile.role === 'admin' ? MOCK_ADMIN_USER.avatar : MOCK_STUDENT_USER.avatar),
+      }
+
+      setUser(enrichedUser)
+      localStorage.setItem('campusfix_auth', JSON.stringify(enrichedUser))
+      saveStudentToRegistry(enrichedUser)
+      return enrichedUser
     } catch (err) {
-      console.warn('Could not fetch profile from Supabase, using local fallback:', err)
+      console.warn('Could not fetch profile from Supabase:', err)
+      return null
     }
-
-    if (fallbackUser) {
-      const reg = getStudentFromRegistry(fallbackUser.email)
-      const merged = {
-        ...fallbackUser,
-        phone: reg?.phone || fallbackUser.phone || '',
-      }
-      setUser(merged)
-      localStorage.setItem('campusfix_auth', JSON.stringify(merged))
-      return merged
-    }
-
-    return null
   }
 
   // Initialize Supabase Auth listener
   useEffect(() => {
+    let isMounted = true
+
     const initAuth = async () => {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession()
+        if (!isMounted) return
+
         setSession(initialSession)
         if (initialSession?.user) {
-          await fetchProfile(initialSession.user.id)
-        } else {
-          // Check local auth state
-          const saved = localStorage.getItem('campusfix_auth')
-          if (saved) {
-            try {
-              const parsed = JSON.parse(saved)
-              if (parsed?.email) {
-                const reg = getStudentFromRegistry(parsed.email)
-                if (reg?.phone) {
-                  parsed.phone = reg.phone
-                  setUser(parsed)
-                }
-              }
-            } catch (e) {}
+          const profile = await fetchProfile(initialSession.user.id)
+          if (!profile && isMounted) {
+            setUser(null)
+            localStorage.removeItem('campusfix_auth')
+          } else if (profile && isMounted) {
+            const savedView = localStorage.getItem('campusfix_view_role')
+            setViewRole(savedView || profile.role || 'student')
           }
+        } else {
+          setUser(null)
+          localStorage.removeItem('campusfix_auth')
         }
       } catch (e) {
         console.warn('Supabase Auth init error:', e)
+        if (isMounted) {
+          setUser(null)
+          localStorage.removeItem('campusfix_auth')
+        }
       } finally {
-        setLoading(false)
+        if (isMounted) setLoading(false)
       }
     }
 
     initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (!isMounted) return
       setSession(newSession)
       if (newSession?.user) {
-        await fetchProfile(newSession.user.id)
+        const profile = await fetchProfile(newSession.user.id)
+        if (!profile && isMounted) {
+          setUser(null)
+          localStorage.removeItem('campusfix_auth')
+        }
+      } else {
+        setUser(null)
+        localStorage.removeItem('campusfix_auth')
       }
     })
 
     return () => {
+      isMounted = false
       subscription?.unsubscribe()
     }
   }, [])
 
-  const login = async (email, password = 'password123', role = 'student') => {
+  // Strictly authenticate via Supabase Auth without auto-creating fallback accounts
+  const login = async (email, password) => {
     try {
-      const loginEmail = email || (role === 'admin' ? 'admin@campusfix.uniten.edu.my' : 'aiman@student.uniten.edu.my')
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
-        password: password || 'password123',
-      })
-
-      if (error) {
-        // Fallback for offline or local mock credentials
-        const registryData = getStudentFromRegistry(loginEmail)
-        let fallback
-        if (role === 'admin' || loginEmail.includes('admin')) {
-          fallback = { ...MOCK_ADMIN_USER, email: loginEmail }
-        } else if (loginEmail === MOCK_STUDENT_USER.email) {
-          fallback = { ...MOCK_STUDENT_USER, email: loginEmail }
-        } else {
-          // Specific student fallback - preserve their exact registered telephone number
-          fallback = {
-            id: registryData?.studentId || registryData?.id || `SW01${Math.floor(10000 + Math.random() * 90000)}`,
-            name: registryData?.name || splitEmail(loginEmail),
-            email: loginEmail,
-            role: 'student',
-            faculty: registryData?.faculty || 'College of Computing & Informatics',
-            phone: registryData?.phone || '',
-            avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(loginEmail)}`,
-          }
+      const cleanEmail = email ? email.trim() : ''
+      if (!cleanEmail || !password) {
+        return {
+          success: false,
+          error: 'Please enter both your email address and password.',
         }
-
-        setUser(fallback)
-        localStorage.setItem('campusfix_auth', JSON.stringify(fallback))
-        return { success: true, user: fallback }
       }
 
+      // 1. Authenticate strictly via Supabase Auth
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password: password,
+      })
+
+      if (error || !data?.user) {
+        setUser(null)
+        setSession(null)
+        localStorage.removeItem('campusfix_auth')
+        return {
+          success: false,
+          error: error?.message || 'Invalid login credentials. Please check your email and password.',
+        }
+      }
+
+      // 2. Fetch the matching user record from public.profiles in Supabase
       const profile = await fetchProfile(data.user.id)
+      if (!profile) {
+        // Keep the user signed out and never create an account automatically
+        await supabase.auth.signOut()
+        setUser(null)
+        setSession(null)
+        localStorage.removeItem('campusfix_auth')
+        return {
+          success: false,
+          error: 'Account profile not found in Supabase. Please ensure your account has been registered.',
+        }
+      }
+
+      setSession(data.session)
+      setViewRole(profile.role || 'student')
+      localStorage.setItem('campusfix_view_role', profile.role || 'student')
+
       return { success: true, user: profile }
     } catch (err) {
       console.error('Login error:', err)
-      return { success: false, error: err.message }
+      setUser(null)
+      setSession(null)
+      localStorage.removeItem('campusfix_auth')
+      return {
+        success: false,
+        error: err.message || 'An error occurred during sign in. Please try again.',
+      }
     }
-  }
-
-  const splitEmail = (em) => {
-    if (!em) return 'Student'
-    const namePart = em.split('@')[0]
-    return namePart.charAt(0).toUpperCase() + namePart.slice(1)
   }
 
   const register = async (registrationData) => {
     try {
       const formattedPhone = formatMalaysianPhone(registrationData.phone) || registrationData.phone || ''
 
-      // 1. Immediately store in persistent student registry (guarantees telephone number preservation)
+      // 1. Immediately store in persistent student registry
       saveStudentToRegistry({
         studentId: registrationData.studentId,
         id: registrationData.studentId,
@@ -269,7 +282,8 @@ export const AuthProvider = ({ children }) => {
       })
 
       if (error) {
-        console.warn('Supabase Auth signUp returned error (proceeding with local registration):', error.message)
+        console.warn('Supabase Auth signUp returned error:', error.message)
+        return { success: false, error: error.message }
       }
 
       // 3. If Supabase created a user, insert or update public.profiles directly
@@ -291,7 +305,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      // 4. Construct current authenticated student state with the EXACT registered telephone number
+      // 4. Construct current authenticated student state
       const newStudentUser = {
         id: registrationData.studentId || data?.user?.id || `SW01${Math.floor(10000 + Math.random() * 90000)}`,
         uuid: data?.user?.id || null,
@@ -300,12 +314,14 @@ export const AuthProvider = ({ children }) => {
         role: 'student',
         faculty: registrationData.faculty || 'College of Computing & Informatics',
         program: registrationData.program || 'Bachelor of Software Engineering (Hons)',
-        phone: formattedPhone, // Captured telephone number!
+        phone: formattedPhone,
         avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(registrationData.name)}`,
       }
 
       setUser(newStudentUser)
+      setViewRole('student')
       localStorage.setItem('campusfix_auth', JSON.stringify(newStudentUser))
+      localStorage.setItem('campusfix_view_role', 'student')
 
       return { success: true, user: newStudentUser }
     } catch (err) {
@@ -382,15 +398,24 @@ export const AuthProvider = ({ children }) => {
     setUser(null)
     setSession(null)
     localStorage.removeItem('campusfix_auth')
+    localStorage.removeItem('campusfix_view_role')
+    setViewRole('student')
   }
 
-  const switchRole = async (newRole) => {
-    if (newRole === 'admin') {
-      await login('admin@campusfix.uniten.edu.my', 'password123', 'admin')
-    } else {
-      await login('aiman@student.uniten.edu.my', 'password123', 'student')
-    }
+  // Switch UI role view without altering the authenticated user or session
+  const switchRole = (newRole) => {
+    if (newRole !== 'admin' && newRole !== 'student') return
+    setViewRole(newRole)
+    localStorage.setItem('campusfix_view_role', newRole)
   }
+
+  // True account roles from Supabase database
+  const isActualAdmin = user?.role === 'admin'
+  const isActualStudent = user?.role === 'student'
+
+  // UI view mode flags (controls navigation/sidebar/view)
+  const isAdmin = viewRole === 'admin'
+  const isStudent = viewRole === 'student'
 
   return (
     <AuthContext.Provider
@@ -398,8 +423,11 @@ export const AuthProvider = ({ children }) => {
         session,
         user,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
-        isStudent: user?.role === 'student',
+        isAdmin,
+        isStudent,
+        isActualAdmin,
+        isActualStudent,
+        viewRole,
         loading,
         login,
         register,

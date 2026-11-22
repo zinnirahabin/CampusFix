@@ -54,6 +54,10 @@ export const AdminDashboard = () => {
   const handleStatusSubmit = async (e) => {
     e.preventDefault()
     if (!editingReport) return
+    if (user?.role !== 'admin') {
+      alert('Access Denied: Only users with an Administrator role can update report status.')
+      return
+    }
 
     setIsUpdating(true)
     try {

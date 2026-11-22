@@ -19,20 +19,22 @@ export const LoginPage = () => {
   const initialRole = searchParams.get('role') === 'admin' ? 'admin' : 'student'
 
   const [role, setRole] = useState(initialRole)
-  const [email, setEmail] = useState(
-    initialRole === 'admin' ? 'admin@campusfix.uniten.edu.my' : 'aiman@student.uniten.edu.my'
-  )
-  const [password, setPassword] = useState('password123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
-  const { login } = useAuth()
+  const { login, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleRoleChange = (newRole) => {
     setRole(newRole)
-    if (newRole === 'admin') {
+    setError('')
+  }
+
+  const handleFillDemo = () => {
+    if (role === 'admin') {
       setEmail('admin@campusfix.uniten.edu.my')
     } else {
       setEmail('aiman@student.uniten.edu.my')
@@ -43,7 +45,8 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!email || !password) {
+    const cleanEmail = email.trim()
+    if (!cleanEmail || !password) {
       setError('Please provide both your email address and password.')
       return
     }
@@ -51,9 +54,16 @@ export const LoginPage = () => {
     setIsLoggingIn(true)
     setError('')
     try {
-      const res = await login(email, password, role)
+      const res = await login(cleanEmail, password)
       if (res.success) {
-        if (role === 'admin') {
+        // Enforce role authorization if logging in under Admin tab
+        if (role === 'admin' && res.user.role !== 'admin') {
+          await logout()
+          setError('Access Denied: This account does not have administrator privileges.')
+          return
+        }
+
+        if (res.user.role === 'admin') {
           navigate('/admin/dashboard')
         } else {
           navigate('/student/dashboard')
@@ -190,9 +200,18 @@ export const LoginPage = () => {
               </div>
             </div>
 
-            {/* Demo Credentials Reminder Note */}
-            <div className="p-3 rounded-xl bg-[#F3F5F8] border border-slate-200 text-xs text-slate-600 space-y-1">
-              <span className="font-semibold text-slate-800 block">Pre-configured Demonstration Account:</span>
+            {/* Demo Credentials Reminder Note with quick-fill button */}
+            <div className="p-3 rounded-xl bg-[#F3F5F8] border border-slate-200 text-xs text-slate-600 space-y-1.5">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-slate-800">Demonstration Account:</span>
+                <button
+                  type="button"
+                  onClick={handleFillDemo}
+                  className="text-[11px] font-semibold text-[#174D91] hover:underline cursor-pointer"
+                >
+                  Fill credentials
+                </button>
+              </div>
               <div className="flex justify-between items-center text-[11px] text-slate-500 font-mono">
                 <span>{role === 'admin' ? 'admin@campusfix.uniten.edu.my' : 'aiman@student.uniten.edu.my'}</span>
                 <span className="text-emerald-700 font-bold">password123</span>
@@ -203,10 +222,10 @@ export const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isLoggingIn}
-                className="w-full py-3 px-4 rounded-xl bg-[#174D91] hover:bg-[#133F77] text-white font-semibold text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3 px-4 rounded-xl bg-[#174D91] hover:bg-[#133F77] text-white font-semibold text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {isLoggingIn ? (
-                  <span>Authenticating...</span>
+                  <span>Authenticating via Supabase...</span>
                 ) : (
                   <>
                     <span>Sign In to CampusFix</span>

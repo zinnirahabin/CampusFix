@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useReports } from '../../context/ReportContext'
+import { useAuth } from '../../context/AuthContext'
 import StatusBadge from '../../components/common/StatusBadge'
 import PriorityBadge from '../../components/common/PriorityBadge'
 import CategoryBadge from '../../components/common/CategoryBadge'
@@ -25,6 +26,7 @@ import {
 
 export const AdminReportsPage = () => {
   const { reports, categories, updateReportStatus } = useReports()
+  const { user } = useAuth()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
@@ -73,6 +75,10 @@ export const AdminReportsPage = () => {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault()
     if (!activeModalReport) return
+    if (user?.role !== 'admin') {
+      alert('Access Denied: Only users with an Administrator role can update report status.')
+      return
+    }
 
     setIsUpdating(true)
     try {
