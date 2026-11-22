@@ -1,32 +1,23 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useReports } from '../context/ReportContext'
-import { useAuth } from '../context/AuthContext'
 import {
+  Armchair,
+  ArrowRight,
   Camera,
   CheckCircle2,
   Clock,
-  ShieldCheck,
-  ArrowRight,
-  Zap,
   Droplets,
-  Wind,
-  Armchair,
-  MonitorPlay,
-  Sparkles,
-  HelpCircle,
-  Building2,
-  Users,
-  ChevronRight,
-  TrendingUp,
-  MapPin,
-  PhoneCall,
   HardDrive,
-  FileCheck,
+  MapPin,
+  MonitorPlay,
+  PhoneCall,
+  ShieldCheck,
+  Sparkles,
   UserCheck,
-  ExternalLink,
+  Wind,
+  Zap
 } from 'lucide-react'
-import StatusBadge from '../components/common/StatusBadge'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { useReports } from '../context/ReportContext'
 
 export const LandingPage = () => {
   const { stats, reports } = useReports()
@@ -225,7 +216,7 @@ export const LandingPage = () => {
 
                 <div className="rounded-2xl overflow-hidden aspect-video relative bg-slate-200 border border-slate-300">
                   <img
-                    src="https://images.unsplash.com/photo-1580481077195-c3a821a58875?auto=format&fit=crop&w=800&q=80"
+                    src="/images/damaged-chair.jpg"
                     alt="Damaged study chair"
                     className="w-full h-full object-cover"
                   />
